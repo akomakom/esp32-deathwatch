@@ -33,13 +33,15 @@ relying instead only on WiFi and Google.
 * Also provides a **webserver** that allows said data to be retrieved via HTTP, if you want (JSON).
 
 
-##### What you do with the data is up to you, but with Google Forms, the idea is to
+##### What you do with the data is up to you, but with Google Forms, the idea is to:
 
-* Put the data in a spreadsheet 
-* Perform queries on spreadsheet
+* Have time-series data in a spreadsheet (for example, number of motion events for each hour) 
 * Run a scheduled Google Script that will send email (for example) when no motion has been detected for X hours.
-  * The script may first email you as a warning
-  * The script may have a whitelist spreadsheet (eg vacation days when no alarming is needed) 
+  * The script could first email you as a warning, and after a further wait - send email to your designated first responders.
+  * The script could have a whitelist spreadsheet (eg vacation days when no alarming is needed)
+* Whatever else.
+
+
 
 #### Circuit
 
