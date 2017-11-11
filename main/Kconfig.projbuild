@@ -1,0 +1,98 @@
+menu "Example Configuration"
+
+config WIFI_SSID
+    string "WiFi SSID"
+	default "myssid"
+	help
+		SSID (network name) for the example to connect to.
+
+config WIFI_PASSWORD
+    string "WiFi Password"
+	default "password"
+	help
+		WiFi password (WPA or WPA2) for the example to use.
+
+		Can be left blank if the network has no security set.
+
+config SUBMIT_FREQUENCY
+    int "Minutes before submitting data to the HTTPS endpoint"
+	range 0 100000
+	default 60
+
+config SUBMIT_HOST
+    string "HTTPS host to submit data to"
+	default "docs.google.com"
+
+config SUBMIT_PORT
+    string "HTTPS port to submit data to"
+    default "443"
+
+config SUBMIT_URI
+    string "relative URI to submit data to on SUBMIT_HOST"
+    default "/forms/d/<YOUR_FORM_ID_HERE>/formResponse"
+
+config SUBMIT_FORM_DATA_TEMPLATE
+    string "www-url-encoded POST data"
+    default "ifq&entry.252694963=%d&entry.1251824504=%d&entry.1547266005=%d&entry.1230345097=%f&submit=Submit"
+    help
+        Parameters to the printf string, in order, are:
+        main_data->motion_count, main_data->door_open, main_data->car_present, main_data->temp
+
+config MOTION_PIN
+    int "Number of the GPIO PIN connected to the Motion Sensor"
+	range 0 34
+	default 34
+
+config LED_PIN
+    int "Number of the PIN connected to the LED (TBD)"
+	range 0 34
+	default 5
+
+
+config US_ECHO_PIN
+    int "Number of the GPIO PIN connected to the Ultrasonic sensor (ECHO)"
+	range 0 34
+	default 4
+
+config US_TRIG_PIN
+    int "Number of the GPIO PIN connected to the Ultrasonic sensor (TRIG)"
+	range 0 34
+	default 15
+
+config US_DISTANCE_OPEN_MIN
+    int "Distance to door when its open (min), cm"
+	range 0 900
+	default 0
+
+config US_DISTANCE_OPEN_MAX
+    int "Distance to door when its open (max), cm"
+	range 0 900
+	default 70
+
+config US_DISTANCE_CLOSED_MIN
+    int "(not used) Distance from ceiling to door when its closed (min), cm"
+	range 0 900
+	default 250
+
+config US_DISTANCE_CLOSED_MAX
+    int "(not used) Distance to ceiling door when its closed (max), cm"
+	range 0 900
+	default 900
+
+	default 100
+config US_DISTANCE_CAR_MIN
+    int "Distance from ceiling to car roof when present (min), cm"
+	range 0 900
+
+config US_DISTANCE_CAR_MAX
+    int "Distance from ceiling to car roof when present (max), cm"
+	range 0 900
+	default 200
+
+config TEMPERATURE_PIN
+    int "Pin for reading from DS18B20 temperature sensor"
+	range 0 34
+	default 32
+
+
+endmenu
