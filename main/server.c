@@ -20,6 +20,7 @@ static const char *TAG = "webserver";
 #include "cJSON.h"
 
 #include "main.h"
+#include "client.h" //feels a little weird, need better decoupling for submit now
 
 #define JSON_REGEN_FREQUENCY 10000
 
@@ -83,15 +84,11 @@ http_server_netconn_serve(struct netconn *conn)
 
       netconn_write(conn, http_html_hdr, sizeof(http_html_hdr)-1, NETCONN_NOCOPY);
 
-      if(buf[5]=='h') {
-//        gpio_set_level(LED_BUILTIN, 0);
+      if(buf[5]=='s') {
+//        submit data now
         /* Send our HTML page */
-        netconn_write(conn, http_index_hml, sizeof(http_index_hml)-1, NETCONN_NOCOPY);
-      }
-      else if(buf[5]=='l') {
-//        gpio_set_level(LED_BUILTIN, 1);
-        /* Send our HTML page */
-        netconn_write(conn, http_index_hml, sizeof(http_index_hml)-1, NETCONN_NOCOPY);
+    	  client_force_request_now();
+    	  netconn_write(conn, http_index_hml, sizeof(http_index_hml)-1, NETCONN_NOCOPY);
       }
       else if(buf[5]=='j') {
     	  netconn_write(conn, json_unformatted, strlen(json_unformatted), NETCONN_NOCOPY);
@@ -141,11 +138,12 @@ static void generate_json(void *pvParameters) {
 	cJSON_AddItemToObject(root, "d", d = cJSON_CreateObject());
 	cJSON_AddItemToObject(root, "info", info = cJSON_CreateObject());
 
-	cJSON_AddStringToObject(d, "myName", "CMMC-ESP32-NANO");
+	cJSON_AddStringToObject(d, "myName", "DeathWatch");
 
 	cJSON_AddNumberToObject(d, "temperature", main_data->temp);
 	cJSON_AddNumberToObject(d, "motion_count", main_data->motion_count);
 	cJSON_AddNumberToObject(d, "door", main_data->door);
+	cJSON_AddNumberToObject(d, "request_count", main_data->submit_count);
 
 	cJSON_AddNumberToObject(info, "heap", xPortGetFreeHeapSize());
 	cJSON_AddStringToObject(info, "sdk", esp_get_idf_version());
@@ -162,6 +160,7 @@ static void generate_json(void *pvParameters) {
         cJSON_ReplaceItemInObject(d, "temperature", cJSON_CreateNumber(main_data->temp));
         cJSON_ReplaceItemInObject(d, "motion_count", cJSON_CreateNumber(main_data->motion_count));
         cJSON_ReplaceItemInObject(d, "door", cJSON_CreateNumber(main_data->door));
+        cJSON_ReplaceItemInObject(d, "request_count", cJSON_CreateNumber(main_data->submit_count));
 
 
 		json_unformatted = cJSON_PrintUnformatted(root);

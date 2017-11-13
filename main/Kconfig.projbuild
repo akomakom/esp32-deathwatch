@@ -1,4 +1,4 @@
-menu "Example Configuration"
+menu "DeathWatch Configuration"
 
 config WIFI_SSID
     string "WiFi SSID"
@@ -15,7 +15,7 @@ config WIFI_PASSWORD
 		Can be left blank if the network has no security set.
 
 config SUBMIT_FREQUENCY
-    int "Minutes before submitting data to the HTTPS endpoint"
+    int "Minutes between submitting data to the HTTPS endpoint"
 	range 0 100000
 	default 60
 
@@ -36,11 +36,14 @@ config SUBMIT_URI
     default "/forms/d/<YOUR_FORM_ID_HERE>/formResponse"
 
 config SUBMIT_FORM_DATA_TEMPLATE
-    string "www-url-encoded POST data"
-    default "ifq&entry.252694963=%d&entry.1251824504=%d&entry.1230345097=%f&entry.643291391=%d&submit=Submit"
+    string "www-url-encoded POST data printf template, see help"
+    default "ifq&entry.252694963=%1$d&entry.1251824504=%2$d&entry.1230345097=%3$s&entry.643291391=%4$d&submit=Submit"
     help
         Parameters to the printf string, in order, are:
-        main_data->motion_count, main_data->door, main_data->temp, uptime
+        %1$d: main_data->motion_count (int)
+        %2$d: main_data->door (int)
+        %3$s: main_data->temp (string) (use 's' due to a bug)
+        %4$d: uptime in minutes (int)
 
 config MOTION_PIN
     int "Number of the GPIO PIN connected to the Motion Sensor"

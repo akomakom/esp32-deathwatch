@@ -1,3 +1,4 @@
+#define DOOR_UNKNOWN 0
 #define DOOR_OPEN 1
 #define DOOR_CARPRESENT 2
 #define DOOR_CLOSED 3

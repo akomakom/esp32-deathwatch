@@ -46,12 +46,14 @@ void distance_callback(double distance) {
     	newstate = DOOR_CLOSED;
     }
 
-    if (newstate != main_data.door) {
+    if (main_data.door != DOOR_UNKNOWN && newstate != main_data.door) {
     	ESP_LOGI(TAG, "Door state changed from %d to %d", main_data.door, newstate);
     	main_data.door = newstate;
     	if (CONFIG_SUBMIT_ON_DOOR_STATE_CHANGE) {
     	    client_force_request_now();
     	}
+    } else {
+    	main_data.door = newstate; //just set it quietly.
     }
 
    ESP_LOGI(TAG, "Distance: %f cm, Door: %d", distance, main_data.door);
@@ -69,7 +71,7 @@ void app_main()
     //temporary
     main_data.temp = 70;
     main_data.motion_count = 0;
-    main_data.door = 0;
+    main_data.door = DOOR_UNKNOWN;
     main_data.submit_count = 0;
 
     initialise_wifi();

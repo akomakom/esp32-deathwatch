@@ -99,15 +99,33 @@ static TaskHandle_t xHandle = NULL;
 
 static void get_request_body(char * buf, main_data_t * main_data) {
     char body[100];
-    sprintf(body, WEB_POSTDATA_TEMPLATE, main_data->motion_count, main_data->door,  main_data->temp, esp_log_timestamp() / 60000);
+    char temp[10];
 
-    ESP_LOGI(TAG, "Body: %s", body);
-    ESP_LOGI(TAG, "Request Template: %s", REQUEST);
-    ESP_LOGI(TAG, "strlen body: %d", strlen(body));
+    //big hack because positional printf is broken with %f: https://github.com/espressif/esp-idf/issues/1269
+    sprintf(temp, "%.2f", main_data->temp);
+
+    sprintf(body, WEB_POSTDATA_TEMPLATE, main_data->motion_count, main_data->door, temp, esp_log_timestamp() / 60000);
+
+
+
+//    ESP_LOGD(TAG, "Body: %s", body);
+//    ESP_LOGD(TAG, "Request Template: %s", REQUEST);
+
+//    printf("printf positional test: %1$u\n",  3);
+//    printf("printf positional test: %1$f\n",  0.3f);
+//    printf("printf normal test: %u\n",  3);
+//    printf("printf normal test: %f\n",  0.3f);
+//
+//    printf("printf positional test: %1$u ; %2$f ; %3$u\n",  3, 0.3f, 4);
+//    printf("printf positional test2: %1$u ; %3$f ; %2$u\n",  3, 4, 0.3f);
+//    printf("printf positional test3: %1$u ; %3$u ; %2$u\n",  3, 4, 5);
+//    printf("printf positional test4: %1$s ; %3$s ; %2$s\n",  "1", "2", "3");
+//
+//    printf("Temperature printf test normal: %.2f, %d",  main_data->temp, esp_log_timestamp());
 
     sprintf(buf, REQUEST , strlen(body), body);
-
-    ESP_LOGI(TAG, "Submitting request: %s", buf);
+    ESP_LOGD(TAG, "strlen body: %d, request: %d", strlen(body), strlen(buf));
+//    ESP_LOGI(TAG, "Submitting request: %s", buf);
 }
 
 static void post_request_hook(main_data_t * main_data) {
@@ -348,6 +366,7 @@ static void post_request_hook(main_data_t * main_data) {
  * proceed to the next request.
  */
 void client_force_request_now() {
+	ESP_LOGI(TAG, "Forcing request now, waking up from wait");
 	xTaskNotify( xHandle, 0, eNoAction );
 }
 
