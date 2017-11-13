@@ -12,7 +12,6 @@
 static const char *TAG = "motion";
 
 SemaphoreHandle_t xSemaphore = NULL;
-//bool led_status = false;
 
 
 // interrupt service routine, called when the button is pressed
@@ -24,27 +23,22 @@ void IRAM_ATTR button_isr_handler(void* arg) {
 
 // task that will react to button clicks
 void motion_handler(void * pvParameters) {
-
-    main_data_t * main_data = (main_data_t *) pvParameters ;
+	void (*callback)() = (void *) pvParameters;
 
 	// infinite loop
 	for(;;) {
 		
 		// wait for the notification from the ISR
 		if(xSemaphoreTake(xSemaphore,portMAX_DELAY) == pdTRUE) {
-		    main_data->motion_count++;
-		    ESP_LOGI(TAG, "Motion detected (%d)", main_data->motion_count);
-//			led_status = !led_status;
-//			gpio_set_level(CONFIG_LED_PIN, led_status);
+		    callback();
 		}
 	}
 }
 
 
-void initialize_motion(main_data_t * main_data) {
+void initialize_motion(void (*callback)()) {
 
     ESP_LOGI(TAG, "Initializing motion interrupt for pin %d", CONFIG_MOTION_PIN);
-    ESP_LOGI(TAG, "Main data has motion count %d", main_data->motion_count);
 	// create the binary semaphore
 	xSemaphore = xSemaphoreCreateBinary();
 
@@ -61,7 +55,7 @@ void initialize_motion(main_data_t * main_data) {
 
 
 	// start the task that will handle the button
-	xTaskCreate(motion_handler, "motion_handler", 2048, main_data, 5, NULL);
+	xTaskCreate(motion_handler, "motion_handler", 2048, callback, 5, NULL);
 
 	// install ISR service with default configuration
 	gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);

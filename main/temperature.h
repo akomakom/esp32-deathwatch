@@ -1,2 +1,2 @@
 
-void initialize_temperature(main_data_t * main_data);
+void initialize_temperature(void (*callback)(float));

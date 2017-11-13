@@ -145,8 +145,7 @@ static void generate_json(void *pvParameters) {
 
 	cJSON_AddNumberToObject(d, "temperature", main_data->temp);
 	cJSON_AddNumberToObject(d, "motion_count", main_data->motion_count);
-	cJSON_AddBoolToObject(d, "door_open", main_data->door_open);
-	cJSON_AddBoolToObject(d, "car_present", main_data->car_present);
+	cJSON_AddNumberToObject(d, "door", main_data->door);
 
 	cJSON_AddNumberToObject(info, "heap", xPortGetFreeHeapSize());
 	cJSON_AddStringToObject(info, "sdk", esp_get_idf_version());
@@ -162,13 +161,11 @@ static void generate_json(void *pvParameters) {
 
         cJSON_ReplaceItemInObject(d, "temperature", cJSON_CreateNumber(main_data->temp));
         cJSON_ReplaceItemInObject(d, "motion_count", cJSON_CreateNumber(main_data->motion_count));
-        cJSON_ReplaceItemInObject(d, "door_open", cJSON_CreateBool(main_data->door_open));
-        cJSON_ReplaceItemInObject(d, "car_present", cJSON_CreateBool(main_data->car_present));
+        cJSON_ReplaceItemInObject(d, "door", cJSON_CreateNumber(main_data->door));
 
 
 		json_unformatted = cJSON_PrintUnformatted(root);
-		ESP_LOGD(TAG, "[len = %d]  ", strlen(json_unformatted));
-        ESP_LOGD(TAG, "%s", json_unformatted);
+		ESP_LOGD(TAG, "[%d char]: %s ", strlen(json_unformatted), json_unformatted);
 
 		delay(JSON_REGEN_FREQUENCY);
 		free(json_unformatted);

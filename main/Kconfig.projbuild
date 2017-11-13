@@ -19,6 +19,10 @@ config SUBMIT_FREQUENCY
 	range 0 100000
 	default 60
 
+config SUBMIT_ON_DOOR_STATE_CHANGE
+    bool "Should make the request immediately if door position changes"
+	default y
+
 config SUBMIT_HOST
     string "HTTPS host to submit data to"
 	default "docs.google.com"
@@ -33,10 +37,10 @@ config SUBMIT_URI
 
 config SUBMIT_FORM_DATA_TEMPLATE
     string "www-url-encoded POST data"
-    default "ifq&entry.252694963=%d&entry.1251824504=%d&entry.1547266005=%d&entry.1230345097=%f&submit=Submit"
+    default "ifq&entry.252694963=%d&entry.1251824504=%d&entry.1230345097=%f&entry.643291391=%d&submit=Submit"
     help
         Parameters to the printf string, in order, are:
-        main_data->motion_count, main_data->door_open, main_data->car_present, main_data->temp
+        main_data->motion_count, main_data->door, main_data->temp, uptime
 
 config MOTION_PIN
     int "Number of the GPIO PIN connected to the Motion Sensor"

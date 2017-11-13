@@ -93,9 +93,13 @@ static const char *RESPONSE_OK = "HTTP/1.0 200";
 extern const uint8_t server_root_cert_pem_start[] asm("_binary_server_root_cert_pem_start");
 extern const uint8_t server_root_cert_pem_end[]   asm("_binary_server_root_cert_pem_end");
 
+
+static TaskHandle_t xHandle = NULL;
+
+
 static void get_request_body(char * buf, main_data_t * main_data) {
     char body[100];
-    sprintf(body, WEB_POSTDATA_TEMPLATE, main_data->motion_count, main_data->door_open, main_data->car_present, main_data->temp);
+    sprintf(body, WEB_POSTDATA_TEMPLATE, main_data->motion_count, main_data->door,  main_data->temp, esp_log_timestamp() / 60000);
 
     ESP_LOGI(TAG, "Body: %s", body);
     ESP_LOGI(TAG, "Request Template: %s", REQUEST);
@@ -326,14 +330,28 @@ static void post_request_hook(main_data_t * main_data) {
         ESP_LOGI(TAG, "Completed %d requests", ++request_count);
         ESP_LOGD(TAG, "Free Heap Memory: %u", xPortGetFreeHeapSize());
 
-        delay(SUBMIT_FREQUENCY * 60000 );
+//        delay(SUBMIT_FREQUENCY * 60000 );
+
+        xTaskNotifyWait( 0x00,      /* Don't clear any notification bits on entry. */
+			ULONG_MAX, /* Reset the notification value to 0 on exit. */
+			NULL, /* Notified value pass out in
+							  ulNotifiedValue. */
+			SUBMIT_FREQUENCY * 60000 / portTICK_RATE_MS);  /* Blocking delay. */
+
         ESP_LOGI(TAG, "Starting again!");
 
     }
 }
 
+/**
+ * Notifies the wait in the request loop to resume now and
+ * proceed to the next request.
+ */
+void client_force_request_now() {
+	xTaskNotify( xHandle, 0, eNoAction );
+}
 
 
 void initialize_client(main_data_t * main_data) {
-    xTaskCreate(&https_post_task, "https_post_task", 8192, main_data, 15, NULL);
+    xTaskCreate(&https_post_task, "https_post_task", 8192, main_data, 15, &xHandle);
 }

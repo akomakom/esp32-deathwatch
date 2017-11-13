@@ -1,7 +1,10 @@
+#define DOOR_OPEN 1
+#define DOOR_CARPRESENT 2
+#define DOOR_CLOSED 3
+
 typedef struct {
     uint16_t motion_count;
-    uint8_t door_open;
-    uint8_t car_present;
+    uint8_t door;
     float temp;
     uint16_t submit_count;
 } main_data_t;

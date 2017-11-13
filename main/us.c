@@ -48,31 +48,14 @@ static uint32_t get_usec() {
 }
 
 
-static void analyze_distance(double distance, main_data_t * main_data) {
-    main_data->door_open = (distance > CONFIG_US_DISTANCE_OPEN_MIN && distance < CONFIG_US_DISTANCE_OPEN_MAX);
-    main_data->car_present = (distance > CONFIG_US_DISTANCE_CAR_MIN && distance < CONFIG_US_DISTANCE_CAR_MAX);
-
-//    if (distance > CONFIG_US_DISTANCE_OPEN_MIN && distance < CONFIG_US_DISTANCE_OPEN_MAX) {
-//        //door is open
-//        main_data->door_open = 1;
-//        main_data->car_present = 0;
-//    } else if (distance > CONFIG_US_DISTANCE_CLOSED_MIN && distance < CONFIG_US_DISTANCE_CLOSED_MAX) {
-//        //door is closed
-//        main_data->door_open = 0;
-//        main_data->car_present = 0;
-//    } else if (distance > CONFIG_US_DISTANCE_CAR_MIN && distance < CONFIG_US_DISTANCE_CAR_MAX) {
-//        main_data->door_open = 0;
-//        main_data->car_present = 1;
-//    }
-    ESP_LOGI(TAG, "Distance: %f cm, Door Open: %d, Car: %d", distance, main_data->door_open, main_data->car_present);
-}
-
 //
 // Toggle trig pin and wait for input on echo pin
 //
 void ultrasound_task(void * pvParameters) {
 
-    main_data_t * main_data = (main_data_t *) pvParameters ;
+	void (*callback)(double) = (void *) pvParameters;
+
+//    main_data_t * main_data = (main_data_t *) pvParameters ;
 
     while(1) {
         // HC-SR04P
@@ -98,7 +81,8 @@ void ultrasound_task(void * pvParameters) {
             uint32_t diff = get_usec() - startTime; // Diff time in uSecs
             // Distance is TimeEchoInSeconds * SpeeOfSound / 2
             double distance = 340.29 * diff / (1000 * 1000 * 2); // Distance in meters
-            analyze_distance(distance * 100, main_data);
+//            analyze_distance(distance * 100, main_data);
+            callback(distance * 100);
         }
         else
         {
@@ -112,7 +96,10 @@ void ultrasound_task(void * pvParameters) {
 
 }
 
-void initialize_ultrasound(main_data_t * main_data) {
+/**
+ * callback should take a distance in cm
+ */
+void initialize_ultrasound(void (*callback)(double)) {
 
     gpio_pad_select_gpio(TRIG_PIN);
     gpio_pad_select_gpio(ECHO_PIN);
@@ -121,6 +108,6 @@ void initialize_ultrasound(main_data_t * main_data) {
     gpio_set_direction(ECHO_PIN, GPIO_MODE_INPUT);
 
 	// start the task that will handle the button
-	xTaskCreate(ultrasound_task, "ultrasound_task", 2048, main_data, 10, NULL);
+	xTaskCreate(ultrasound_task, "ultrasound_task", 2048, callback, 10, NULL);
 
 }

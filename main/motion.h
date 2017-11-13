@@ -1,1 +1,1 @@
-void initialize_motion(main_data_t * main_data);
+void initialize_motion(void (*callback)());
