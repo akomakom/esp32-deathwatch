@@ -45,6 +45,9 @@ relying instead only on WiFi and Google.
 
 #### Circuit
 
+![Circuit](/help/circuit.png?raw=true "Circuit")
+
+
 The wiring is trivial, sensors are connected to power, ground and GPIO pins, except for the following:
 
 * US-100 rangefinder takes 5V input (taken from 5V pin) and outputs 5V signal, so I run it through a resistor voltage divider (2.2k and 1k because that's what I had) before connecting to GPIO.
