@@ -1,7 +1,7 @@
 ESP-IDF Death Watch for the ESP32
 ====================
 
-The **IoT** project is lovingly called Death Watch because it serves a very simple purpose: 
+This **IoT** project is lovingly called Death Watch because it serves a very simple purpose: 
 it reports in-house activities so that some action can be taken should occupants seize to seem alive. 
 It is designed to be run on the [Espressif ESP32](http://espressif.com/en/products/hardware/esp32/overview) 
 and compiled using the ESP-IDF framework. 
@@ -9,7 +9,7 @@ and compiled using the ESP-IDF framework.
 #### Rationale
 
 Although there may be many reasons do this, in my case this IoT project solves the 
-*What if I die, in or out of the house, and the pet(s) are left unattended and nobody knows?* dilemma.  It could equally well serve to monitor senile/disabled/elderly individuals (although there are probably better tools).
+*What if I die (or am otherwise detained), in or out of the house, and the pet(s) are left unattended and nobody knows?* dilemma.  It could equally well serve to monitor senile/disabled/elderly individuals (although there are probably better tools).
 
 There are obviously many ways to solve this problem, 
 but I wanted something that's more reliable than my phone. 
