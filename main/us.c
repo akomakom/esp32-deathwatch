@@ -1,3 +1,6 @@
+/**
+ * This code has been adapted from https://github.com/Ebiroll/esp32_ultra
+ */
 #include <stdio.h>
 
 #include "driver/gpio.h"
@@ -17,13 +20,8 @@
 #include <sys/time.h>
 
 #include "main.h"
+#include "us.h"
 
-#define ESP_INTR_FLAG_DEFAULT 0
-
-#define ECHO_PIN CONFIG_US_ECHO_PIN
-#define TRIG_PIN CONFIG_US_TRIG_PIN
-
-#define US_READ_DELAY 10000
 
 static const char *TAG = "us";
 
@@ -54,8 +52,6 @@ static uint32_t get_usec() {
 void ultrasound_task(void * pvParameters) {
 
 	void (*callback)(double) = (void *) pvParameters;
-
-//    main_data_t * main_data = (main_data_t *) pvParameters ;
 
     while(1) {
         // HC-SR04P
@@ -92,7 +88,6 @@ void ultrasound_task(void * pvParameters) {
         // Delay and re run.
         delay(US_READ_DELAY );
     }
-
 
 }
 

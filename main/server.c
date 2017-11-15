@@ -10,19 +10,16 @@
 #include "esp_log.h"
 #include "tcpip_adapter.h"
 
-static const char *TAG = "webserver";
-
-//static char* TAG = "app_main";
-
 #include "lwip/err.h"
 #include "string.h"
 
 #include "cJSON.h"
 
 #include "main.h"
-#include "client.h" //feels a little weird, need better decoupling for submit now
+#include "client.h" //feels a little weird to plug directly into client, need better decoupling for submit now
+#include "server.h"
 
-#define JSON_REGEN_FREQUENCY 10000
+static const char *TAG = "webserver";
 
 char* json_unformatted;
 
@@ -143,6 +140,7 @@ static void generate_json(void *pvParameters) {
 	cJSON_AddNumberToObject(d, "temperature", main_data->temp);
 	cJSON_AddNumberToObject(d, "motion_count", main_data->motion_count);
 	cJSON_AddNumberToObject(d, "door", main_data->door);
+	cJSON_AddNumberToObject(d, "door_raw", main_data->door_raw_distance);
 	cJSON_AddNumberToObject(d, "request_count", main_data->submit_count);
 
 	cJSON_AddNumberToObject(info, "heap", xPortGetFreeHeapSize());
@@ -160,6 +158,7 @@ static void generate_json(void *pvParameters) {
         cJSON_ReplaceItemInObject(d, "temperature", cJSON_CreateNumber(main_data->temp));
         cJSON_ReplaceItemInObject(d, "motion_count", cJSON_CreateNumber(main_data->motion_count));
         cJSON_ReplaceItemInObject(d, "door", cJSON_CreateNumber(main_data->door));
+        cJSON_ReplaceItemInObject(d, "door_raw", cJSON_CreateNumber(main_data->door_raw_distance));
         cJSON_ReplaceItemInObject(d, "request_count", cJSON_CreateNumber(main_data->submit_count));
 
 

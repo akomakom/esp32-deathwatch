@@ -24,10 +24,7 @@
 #include "us.h"
 #include "temperature.h"
 
-//#include "motion.h"
-
 static const char *TAG = "main";
-
 
 static main_data_t main_data;
 
@@ -56,7 +53,8 @@ void distance_callback(double distance) {
     	main_data.door = newstate; //just set it quietly.
     }
 
-   ESP_LOGI(TAG, "Distance: %f cm, Door: %d", distance, main_data.door);
+    main_data.door_raw_distance = distance; //saving it as an int for simplicity
+    ESP_LOGI(TAG, "Distance: %f cm, Door: %d", distance, main_data.door);
 }
 
 void temperature_callback(float temperature) {
@@ -68,8 +66,8 @@ void app_main()
 {
     ESP_ERROR_CHECK( nvs_flash_init() );
 
-    //temporary
-    main_data.temp = 70;
+    //initial values
+    main_data.temp = -1000;
     main_data.motion_count = 0;
     main_data.door = DOOR_UNKNOWN;
     main_data.submit_count = 0;
@@ -82,6 +80,5 @@ void app_main()
 
     initialize_client(&main_data);
     initialize_server(&main_data);
-
 
 }

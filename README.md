@@ -50,14 +50,16 @@ relying instead only on WiFi and Google.
 
 The wiring is trivial, sensors are connected to power, ground and GPIO pins, except for the following:
 
-* US-100 rangefinder takes 5V input (taken from 5V pin) and outputs 5V signal, so I run it through a resistor voltage divider (2.2k and 1k because that's what I had) before connecting to GPIO.
+* US-100 rangefinder takes 5V input (taken from 5V pin) and outputs 5V signal (I think), so I run it through a resistor voltage divider (2.2k and 1k because that's what I had) before connecting to GPIO.
 * HC-SR501 motion detector takes 5V (taken from 5V pin) but outputs 3.3v, so it's just connected directly to GPIO.
-* DS18B20 temperature sensor connects directly to 3.3v power/ground pins and to GPIO for signal, except that a >3k resistor is used to pull-up. 
+* DS18B20 temperature sensor connects directly to 3.3v power/ground pins and to GPIO for signal, except that a >=3K resistor is used to pull-up (connects signal wire to 3.3v) 
 
 All of the above are standard wiring connections and can be found on the interwebs.  
 ADC1 pins are used for all of the above since WiFi is used (see defaults). 
 
 #### Credits
+
+Various components were adapted from:
 
 * https://github.com/feelfreelinux/ds18b20
 * https://github.com/cmmakerclub/esp32-webserver
@@ -70,5 +72,10 @@ This application is meant to be used with `Espressif IoT Development Framework`_
 
 Please check ESP-IDF docs for getting started instructions.
 
+#### Additional Possibilities:
 
+* Motion detected LED (either controlled by GPIO or directly form the motion sensor pin, depending on power requirements).
+* Car position indicator (far enough into garage), probably with a second ultrasonic module.  This would have to be measuring very frequently to be useful and will need a bright light of some kind to indicate position.
+* Configuration via the built-in webserver (flash storage for settings).  
+* Control of garage door via webserver (relay to button).  Possibly even automatically close the door if left open.
 

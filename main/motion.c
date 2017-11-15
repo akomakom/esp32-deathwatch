@@ -6,8 +6,8 @@
 #include "esp_log.h"
 
 #include "main.h"
+#include "motion.h"
 
-#define ESP_INTR_FLAG_DEFAULT 0
 
 static const char *TAG = "motion";
 

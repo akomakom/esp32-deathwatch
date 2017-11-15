@@ -49,23 +49,9 @@
 
 #include "main.h"
 #include "network.h"
+#include "client.h"
 
-/* The examples use simple WiFi configuration that you can set via
-   'make menuconfig'.
 
-   If you'd rather not, just change the below entries to strings with
-   the config you want - ie #define EXAMPLE_WIFI_SSID "mywifissid"
-*/
-#define EXAMPLE_WIFI_SSID CONFIG_WIFI_SSID
-#define EXAMPLE_WIFI_PASS CONFIG_WIFI_PASSWORD
-
-/* Constants that aren't configurable in menuconfig */
-#define WEB_SERVER CONFIG_SUBMIT_HOST
-#define WEB_PORT CONFIG_SUBMIT_PORT
-#define WEB_URL CONFIG_SUBMIT_URI
-#define WEB_POSTDATA_TEMPLATE CONFIG_SUBMIT_FORM_DATA_TEMPLATE
-#define SUBMIT_FREQUENCY CONFIG_SUBMIT_FREQUENCY
-#define INITIAL_DELAY 10000
 
 static const char *TAG = "webclient";
 

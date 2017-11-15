@@ -4,21 +4,25 @@
 #include "freertos/semphr.h"
 #include "esp_log.h"
 
+#include "temperature.h"
 #include "ds18b20.h"
 #include "main.h"
 
-#define TEMPERATURE_READ_FREQUENCY 60000
-
-//static const char *TAG = "temperature";
+static const char *TAG = "temperature";
 
 
 void temperature_task(void * pvParameters) {
 
-//    main_data_t * main_data = (main_data_t *) pvParameters ;
+    float temperature;
 	void (*callback)(float) = (void *) pvParameters;
 
     while(1) {
-        callback(ds18b20_get_temp());
+        temperature = ds18b20_get_temp();
+        if (temperature > TEMPERATURE_ACCEPTABLE_MAX || temperature < TEMPERATURE_ACCEPTABLE_MIN) {
+        	ESP_LOGI(TAG, "Bad temperature reading '%f', ignoring", temperature);
+        } else {
+        	callback(temperature);
+        }
         delay(TEMPERATURE_READ_FREQUENCY );
     }
 }
