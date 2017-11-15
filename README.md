@@ -1,8 +1,9 @@
 ESP-IDF Death Watch
 ====================
 
-The application is lovingly called Death Watch because it serves a very simple purpose: 
-it reports in-house activities so that some action can be taken should occupants seize to seem alive.
+The **IoT** project is lovingly called Death Watch because it serves a very simple purpose: 
+it reports in-house activities so that some action can be taken should occupants seize to seem alive. 
+It is designed to be run on the [Espressif ESP32](http://espressif.com/en/products/hardware/esp32/overview).
 
 #### Rationale
 
@@ -15,9 +16,9 @@ In fact, I wanted it to rely on as little hardware as possible,
 so I didn't involve any of my own servers or privately hosted code, 
 relying instead only on WiFi and Google. 
 
-#### What it does
+#### Setup
 
-##### In my application, the ESP-32 board connects to:
+##### The ESP-32 board is connected to:
 
 * A **motion sensor** (ie HC-SR501) - detects human motion, placed where pets will not trip it (garage in my case)
 * An **ultrasonic rangefinder** (ie US-100) - detects garage door position (both for fun and to serve its purpose).  Intended to be mounted on the ceiling pointed down, this can then identify 3 states: 
@@ -39,7 +40,10 @@ relying instead only on WiFi and Google.
 * Run a scheduled Google Script that will send email (for example) when no motion has been detected for X hours.
   * The script could first email you as a warning, and after a further wait - send email to your designated first responders.
   * The script could have a whitelist spreadsheet (eg vacation days when no alarming is needed)
+  * The script also sends reminders if the garage door is left open.
 * Whatever else.
+
+The above is fully implemented in google docs, I'll share the code once it stabilizes. 
 
 
 
