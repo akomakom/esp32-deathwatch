@@ -1,9 +1,10 @@
-ESP-IDF Death Watch
+ESP-IDF Death Watch for the ESP32
 ====================
 
 The **IoT** project is lovingly called Death Watch because it serves a very simple purpose: 
 it reports in-house activities so that some action can be taken should occupants seize to seem alive. 
-It is designed to be run on the [Espressif ESP32](http://espressif.com/en/products/hardware/esp32/overview).
+It is designed to be run on the [Espressif ESP32](http://espressif.com/en/products/hardware/esp32/overview) 
+and compiled using the ESP-IDF framework. 
 
 #### Rationale
 
