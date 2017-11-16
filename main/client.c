@@ -256,6 +256,9 @@ static void post_request_hook(main_data_t * main_data) {
 
         get_request_body(request, main_data);
 
+        ESP_LOGI(TAG, "Connecting to %s:%s/%s", WEB_SERVER, WEB_PORT, WEB_URL);
+        ESP_LOGD(TAG, "REQUEST:\n%s", request);
+
         size_t written_bytes = 0;
         do {
             ret = mbedtls_ssl_write(&ssl,
@@ -302,16 +305,17 @@ static void post_request_hook(main_data_t * main_data) {
 
             //let's confirm that it's a 200 and break
             if (strncmp(buf, RESPONSE_OK, strlen(RESPONSE_OK)) == 0) {
-                ESP_LOGI(TAG, "Response was OK in the first %d chars, skipping output", len);
+                ESP_LOGI(TAG, "Response was OK in the first %d chars, skipping the rest of the output", len);
+                ESP_LOGD(TAG, "RESPONSE:\n%s", buf);
                 ret = 0;
                 break;
             }
 
             ESP_LOGD(TAG, "%d bytes read", len);
             /* Print response directly to stdout as it is read */
-//            for(int i = 0; i < len; i++) {
-//                putchar(buf[i]);
-//            }
+            for(int i = 0; i < len; i++) {
+                putchar(buf[i]);
+            }
         } while(1);
 
         mbedtls_ssl_close_notify(&ssl);
