@@ -212,7 +212,7 @@ static void post_request_hook(main_data_t * main_data) {
 
         mbedtls_net_init(&server_fd);
 
-        ESP_LOGI(TAG, "Connecting to %s:%s...", WEB_SERVER, WEB_PORT);
+        ESP_LOGI(TAG, "Connecting to %s:%s/%s", WEB_SERVER, WEB_PORT, WEB_URL);
 
         if ((ret = mbedtls_net_connect(&server_fd, WEB_SERVER,
                                       WEB_PORT, MBEDTLS_NET_PROTO_TCP)) != 0)
@@ -221,11 +221,11 @@ static void post_request_hook(main_data_t * main_data) {
             goto exit;
         }
 
-        ESP_LOGI(TAG, "Connected.");
+        ESP_LOGD(TAG, "Connected.");
 
         mbedtls_ssl_set_bio(&ssl, &server_fd, mbedtls_net_send, mbedtls_net_recv, NULL);
 
-        ESP_LOGI(TAG, "Performing the SSL/TLS handshake...");
+        ESP_LOGD(TAG, "Performing the SSL/TLS handshake...");
 
         while ((ret = mbedtls_ssl_handshake(&ssl)) != 0)
         {
@@ -236,7 +236,7 @@ static void post_request_hook(main_data_t * main_data) {
             }
         }
 
-        ESP_LOGI(TAG, "Verifying peer X.509 certificate...");
+        ESP_LOGD(TAG, "Verifying peer X.509 certificate...");
 
         if ((flags = mbedtls_ssl_get_verify_result(&ssl)) != 0)
         {
@@ -250,13 +250,12 @@ static void post_request_hook(main_data_t * main_data) {
             ESP_LOGI(TAG, "Certificate verified.");
         }
 
-        ESP_LOGI(TAG, "Cipher suite is %s", mbedtls_ssl_get_ciphersuite(&ssl));
+        ESP_LOGD(TAG, "Cipher suite is %s", mbedtls_ssl_get_ciphersuite(&ssl));
 
         ESP_LOGI(TAG, "Writing HTTP request...");
 
         get_request_body(request, main_data);
 
-        ESP_LOGI(TAG, "Connecting to %s:%s/%s", WEB_SERVER, WEB_PORT, WEB_URL);
         ESP_LOGD(TAG, "REQUEST:\n%s", request);
 
         size_t written_bytes = 0;
@@ -273,7 +272,7 @@ static void post_request_hook(main_data_t * main_data) {
             }
         } while(written_bytes < strlen(request));
 
-        ESP_LOGI(TAG, "Reading HTTP response...");
+        ESP_LOGD(TAG, "Reading HTTP response...");
 
         do
         {

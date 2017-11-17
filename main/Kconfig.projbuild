@@ -39,7 +39,8 @@ config SUBMIT_FORM_DATA_TEMPLATE
     string "www-url-encoded POST data printf template, see help"
     default "ifq&entry.252694963=%1$d&entry.1251824504=%2$d&entry.1230345097=%3$s&entry.643291391=%4$d&submit=Submit"
     help
-        Parameters to the printf string, in order, are:
+        Option 1:
+        Positional parameters to the printf string, in order, are:
         %1$d: main_data->motion_count (int)
         %2$d: main_data->door (int)
         %3$s: main_data->temp (string) (use 's' due to a bug)
@@ -48,6 +49,9 @@ config SUBMIT_FORM_DATA_TEMPLATE
         
         Note that you can only skip parameters from the end (1,2,3 is OK but 1,3,4 or 2,3,4 is not),
         you can however use unneeded parameters as bogus values, eg: &bogus1=%3$s&bogus2=%2$d
+
+        Option 2:
+        You can also use non-positional parameters instead (%d, %s, etc) but these options are mutually exclusive.
 
 config MOTION_PIN
     int "Number of the GPIO PIN connected to the Motion Sensor"

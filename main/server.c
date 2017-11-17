@@ -127,8 +127,6 @@ static void generate_json(void *pvParameters) {
 
     main_data_t * main_data = (main_data_t *) pvParameters ;
 
-    ESP_LOGI(TAG, "Main Data: %f/%d", main_data->temp, main_data->motion_count);
-
 	cJSON *root, *info, *d;
 	root = cJSON_CreateObject();
 
@@ -137,36 +135,38 @@ static void generate_json(void *pvParameters) {
 
 	cJSON_AddStringToObject(d, "myName", "DeathWatch");
 
-	cJSON_AddNumberToObject(d, "temperature", main_data->temp);
-	cJSON_AddNumberToObject(d, "motion_count", main_data->motion_count);
-	cJSON_AddNumberToObject(d, "door", main_data->door);
-	cJSON_AddNumberToObject(d, "door_raw", main_data->door_raw_distance);
-	cJSON_AddNumberToObject(d, "request_count", main_data->submit_count);
+	cJSON_AddNumberToObject(d, JSON_KEY_TEMPERATURE, main_data->temp);
+	cJSON_AddNumberToObject(d, JSON_KEY_MOTION_COUNT, main_data->motion_count);
+	cJSON_AddNumberToObject(d, JSON_KEY_DOOR, main_data->door);
+	cJSON_AddNumberToObject(d, JSON_KEY_DOOR_RAW, main_data->door_raw_distance);
+	cJSON_AddNumberToObject(d, JSON_KEY_REQUEST_COUNT, main_data->submit_count);
 
-	cJSON_AddNumberToObject(info, "heap", xPortGetFreeHeapSize());
-	cJSON_AddStringToObject(info, "sdk", esp_get_idf_version());
-	cJSON_AddNumberToObject(info, "time", esp_log_timestamp());
+	cJSON_AddNumberToObject(info, JSON_KEY_HEAP, xPortGetFreeHeapSize());
+	cJSON_AddNumberToObject(info, JSON_KEY_HEAP_MIN, xPortGetMinimumEverFreeHeapSize());
+	cJSON_AddStringToObject(info, JSON_KEY_SDK, esp_get_idf_version());
+	cJSON_AddNumberToObject(info, JSON_KEY_TIME, esp_log_timestamp());
 
 	while (1) {
-		cJSON_ReplaceItemInObject(info, "heap",
+		cJSON_ReplaceItemInObject(info, JSON_KEY_HEAP,
 				cJSON_CreateNumber(xPortGetFreeHeapSize()));
-		cJSON_ReplaceItemInObject(info, "time",
+		cJSON_ReplaceItemInObject(info, JSON_KEY_HEAP_MIN,
+				cJSON_CreateNumber(xPortGetMinimumEverFreeHeapSize()));
+		cJSON_ReplaceItemInObject(info, JSON_KEY_TIME,
 				cJSON_CreateNumber(esp_log_timestamp()));
-		cJSON_ReplaceItemInObject(info, "sdk",
-				cJSON_CreateString(esp_get_idf_version()));
 
-        cJSON_ReplaceItemInObject(d, "temperature", cJSON_CreateNumber(main_data->temp));
-        cJSON_ReplaceItemInObject(d, "motion_count", cJSON_CreateNumber(main_data->motion_count));
-        cJSON_ReplaceItemInObject(d, "door", cJSON_CreateNumber(main_data->door));
-        cJSON_ReplaceItemInObject(d, "door_raw", cJSON_CreateNumber(main_data->door_raw_distance));
-        cJSON_ReplaceItemInObject(d, "request_count", cJSON_CreateNumber(main_data->submit_count));
+
+        cJSON_ReplaceItemInObject(d, JSON_KEY_TEMPERATURE, cJSON_CreateNumber(main_data->temp));
+        cJSON_ReplaceItemInObject(d, JSON_KEY_MOTION_COUNT, cJSON_CreateNumber(main_data->motion_count));
+        cJSON_ReplaceItemInObject(d, JSON_KEY_DOOR, cJSON_CreateNumber(main_data->door));
+        cJSON_ReplaceItemInObject(d, JSON_KEY_DOOR_RAW, cJSON_CreateNumber(main_data->door_raw_distance));
+        cJSON_ReplaceItemInObject(d, JSON_KEY_REQUEST_COUNT, cJSON_CreateNumber(main_data->submit_count));
 
 
 		json_unformatted = cJSON_PrintUnformatted(root);
 		ESP_LOGD(TAG, "[%d char]: %s ", strlen(json_unformatted), json_unformatted);
+		free(json_unformatted);
 
 		delay(JSON_REGEN_FREQUENCY);
-		free(json_unformatted);
 	}
 }
 
