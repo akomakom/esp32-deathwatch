@@ -87,10 +87,12 @@ static void http_server_netconn_serve(struct netconn *conn) {
 				if (buf[5] == 's') {
 					//        submit data now
 					client_force_request_now();
+				} else if (buf[5] == 'h'){
+					//heap dump
+					heap_caps_dump_all();
 				}
 				netconn_write(conn, http_index_hml, sizeof(http_index_hml) - 1,
 						NETCONN_NOCOPY);
-
 			}
 		}
 
