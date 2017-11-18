@@ -256,10 +256,10 @@ static void post_request_hook(main_data_t * main_data) {
 
         ESP_LOGD(TAG, "Cipher suite is %s", mbedtls_ssl_get_ciphersuite(&ssl));
 
-        ESP_LOGI(TAG, "Writing HTTP request...");
 
         get_request_body(request, main_data);
 
+        ESP_LOGI(TAG, "Writing HTTP request which is %d bytes", strlen(request));
         ESP_LOGD(TAG, "REQUEST:\n%s", request);
 
         size_t written_bytes = 0;
@@ -268,7 +268,7 @@ static void post_request_hook(main_data_t * main_data) {
                                     (const unsigned char *)request + written_bytes,
                                     strlen(request) - written_bytes);
             if (ret >= 0) {
-                ESP_LOGI(TAG, "%d bytes written", ret);
+                ESP_LOGD(TAG, "%d bytes written", ret);
                 written_bytes += ret;
             } else if (ret != MBEDTLS_ERR_SSL_WANT_WRITE && ret != MBEDTLS_ERR_SSL_WANT_READ) {
                 ESP_LOGE(TAG, "mbedtls_ssl_write returned -0x%x", -ret);
@@ -314,7 +314,8 @@ static void post_request_hook(main_data_t * main_data) {
                 break;
             }
 
-            ESP_LOGD(TAG, "%d bytes read", len);
+            ESP_LOGI(TAG, "Dumping response because it was not OK");
+            ESP_LOGI(TAG, "%d bytes read", len);
             /* Print response directly to stdout as it is read */
             for(int i = 0; i < len; i++) {
                 putchar(buf[i]);
