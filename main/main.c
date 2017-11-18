@@ -71,6 +71,7 @@ void app_main()
     main_data.motion_count = 0;
     main_data.door = DOOR_UNKNOWN;
     main_data.submit_count = 0;
+    main_data.server_request_count = 0;
 
     initialise_wifi();
 

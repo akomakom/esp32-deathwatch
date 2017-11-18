@@ -13,6 +13,7 @@
 #define JSON_KEY_DOOR			"door"
 #define JSON_KEY_DOOR_RAW		"door_raw"
 #define JSON_KEY_REQUEST_COUNT  "request_count"
+#define JSON_KEY_SERVE_COUNT  	"serve_count"
 
 
 
