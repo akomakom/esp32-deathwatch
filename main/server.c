@@ -21,7 +21,7 @@
 
 static const char *TAG = "webserver";
 
-char* json_unformatted;
+char* json_unformatted = NULL;
 
 const static char http_html_hdr[] =
     "HTTP/1.1 200 OK\r\nContent-type: text/html\r\n\r\n";
@@ -162,11 +162,11 @@ static void generate_json(void *pvParameters) {
         cJSON_ReplaceItemInObject(d, JSON_KEY_REQUEST_COUNT, cJSON_CreateNumber(main_data->submit_count));
 
 
-        if (json_unformatted)
+        free(json_unformatted);
 		json_unformatted = cJSON_PrintUnformatted(root);
 		ESP_LOGD(TAG, "[%d char]: %s ", strlen(json_unformatted), json_unformatted);
 		delay(JSON_REGEN_FREQUENCY);
-		free(json_unformatted); //
+//		free(json_unformatted); //
 
 	}
 }
