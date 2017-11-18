@@ -28,7 +28,7 @@ config SUBMIT_HOST
 	default "docs.google.com"
 	help
 	    If you want a valid cert for the request, you can run something like this to get the cert for the target host:
-        echo | openssl s_client -connect docs.google.com:443 2>&1 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p'  > server_root_cert.pem
+        	echo | openssl s_client -connect docs.google.com:443 2>&1 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p'  > server_root_cert.pem
 
 
 config SUBMIT_PORT
