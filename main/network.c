@@ -88,23 +88,19 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 }
 
 void wifi_await_connection() {
-	while((xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
-                            false, true, 1000 / portTICK_RATE_MS) & CONNECTED_BIT) == 0) {
-
-		ESP_LOGW(TAG, "Someone is waiting for wifi connection");
-	}
-
+	xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
+	                            false, true, portMAX_DELAY);
 }
 
 void wifi_exclusive_start(const char * caller) {
-	while( xSemaphoreTake( wifi_semaphore, 1000 / portTICK_RATE_MS) != pdTRUE ) {
-		//Print out a warning if mutex is busy for that long
-		ESP_LOGW(TAG, "Waiting to take mutex: %s", caller);
-	}
+//	while( xSemaphoreTake( wifi_semaphore, 1000 / portTICK_RATE_MS) != pdTRUE ) {
+//		//Print out a warning if mutex is busy for that long
+//		ESP_LOGW(TAG, "Waiting to take mutex: %s", caller);
+//	}
 }
 
 void wifi_exclusive_end(const char * caller) {
-	xSemaphoreGive(wifi_semaphore);
+//	xSemaphoreGive(wifi_semaphore);
 }
 
 
