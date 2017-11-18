@@ -162,11 +162,12 @@ static void generate_json(void *pvParameters) {
         cJSON_ReplaceItemInObject(d, JSON_KEY_REQUEST_COUNT, cJSON_CreateNumber(main_data->submit_count));
 
 
+        if (json_unformatted)
 		json_unformatted = cJSON_PrintUnformatted(root);
 		ESP_LOGD(TAG, "[%d char]: %s ", strlen(json_unformatted), json_unformatted);
-		free(json_unformatted);
-
 		delay(JSON_REGEN_FREQUENCY);
+		free(json_unformatted); //
+
 	}
 }
 
