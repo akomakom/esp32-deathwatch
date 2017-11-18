@@ -78,7 +78,11 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
            auto-reassociate. */
         xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
         ESP_LOGI(TAG, "WIFI Disconnect, reconnecting");
-        ESP_ERROR_CHECK(esp_wifi_connect());
+        //just connect seems to fail, let's try stop/start
+        ESP_ERROR_CHECK(esp_wifi_stop());
+        ESP_ERROR_CHECK(esp_wifi_start());
+
+//        ESP_ERROR_CHECK(esp_wifi_connect());
         ESP_LOGI(TAG, "WIFI ReConnected");
         break;
     default:
