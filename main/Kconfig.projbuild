@@ -26,6 +26,10 @@ config SUBMIT_ON_DOOR_STATE_CHANGE
 config SUBMIT_HOST
     string "HTTPS host to submit data to"
 	default "docs.google.com"
+	help
+	    If you want a valid cert for the request, you can run something like this to get the cert for the target host:
+        echo | openssl s_client -connect docs.google.com:443 2>&1 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p'  > server_root_cert.pem
+
 
 config SUBMIT_PORT
     string "HTTPS port to submit data to"
