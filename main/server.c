@@ -125,6 +125,7 @@ static void http_server(void *pvParameters) {
 			}
 			wifi_exclusive_end(TAG);
 			main_data->server_request_count++;
+			delay(10); //just to rule out task busywaiting issues
 		} while (err == ERR_OK);
 		ESP_LOGE(TAG, "Server accept loop died, code %u", err);
 		netconn_close(conn);
