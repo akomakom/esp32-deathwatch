@@ -203,6 +203,7 @@ static void post_request_hook(main_data_t * main_data) {
 
     while(1) {
         ESP_LOGI(TAG, "While begins");
+        wifi_exclusive_start(TAG);
         /* Wait for the callback to set the CONNECTED_BIT in the
            event group.
         */
@@ -322,8 +323,11 @@ static void post_request_hook(main_data_t * main_data) {
         post_request_hook(main_data);
 
     exit:
+		wifi_exclusive_end(TAG);
         mbedtls_ssl_session_reset(&ssl);
         mbedtls_net_free(&server_fd);
+
+
 
         if(ret != 0)
         {

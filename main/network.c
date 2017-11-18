@@ -38,9 +38,13 @@
 #include "lwip/netdb.h"
 #include "lwip/dns.h"
 
+#include "freertos/semphr.h"
+
 #include "main.h"
 #include "network.h"
 
+
+static SemaphoreHandle_t wifi_semaphore;
 
 /* FreeRTOS event group to signal when we are connected & ready to make a request */
 static EventGroupHandle_t wifi_event_group;
@@ -84,8 +88,20 @@ void wifi_await_connection() {
                             false, true, portMAX_DELAY);
 }
 
+void wifi_exclusive_start(char * caller) {
+	while( xSemaphoreTake( wifi_semaphore, 1000 / portTICK_RATE_MS) != pdTRUE ) {
+		ESP_LOGD(TAG, "Waiting to take mutex: %s", caller);
+	}
+}
+
+void wifi_exclusive_end(char * caller) {
+	xSemaphoreGive(wifi_semaphore);
+}
+
+
 void initialise_wifi(void)
 {
+	wifi_semaphore = xSemaphoreCreateMutex();
     tcpip_adapter_init();
     wifi_event_group = xEventGroupCreate();
     ESP_ERROR_CHECK( esp_event_loop_init(event_handler, NULL) );

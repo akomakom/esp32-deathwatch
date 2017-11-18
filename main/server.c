@@ -18,6 +18,7 @@
 #include "main.h"
 #include "client.h" //feels a little weird to plug directly into client, need better decoupling for submit now
 #include "server.h"
+#include "network.h"
 
 static const char *TAG = "webserver";
 
@@ -112,10 +113,12 @@ static void http_server(void *pvParameters) {
 		netconn_listen(conn);
 		do {
 			err = netconn_accept(conn, &newconn);
+			wifi_exclusive_start(TAG);
 			if (err == ERR_OK) {
 				http_server_netconn_serve(newconn);
 				netconn_delete(newconn);
 			}
+			wifi_exclusive_end(TAG);
 			main_data->server_request_count++;
 		} while (err == ERR_OK);
 		ESP_LOGE(TAG, "Server accept loop died, code %u", err);
