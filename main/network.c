@@ -60,7 +60,9 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 {
     switch(event->event_id) {
     case SYSTEM_EVENT_STA_START:
+        ESP_LOGI(TAG, "Starting WIFI connect");
     	ESP_ERROR_CHECK(esp_wifi_connect());
+    	ESP_LOGI(TAG, "WIFI Connected");
         break;
     case SYSTEM_EVENT_STA_GOT_IP:
         xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
@@ -75,7 +77,9 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
         /* This is a workaround as ESP32 WiFi libs don't currently
            auto-reassociate. */
         xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
+        ESP_LOGI(TAG, "WIFI Disconnect, reconnecting");
         ESP_ERROR_CHECK(esp_wifi_connect());
+        ESP_LOGI(TAG, "WIFI ReConnected");
         break;
     default:
         break;
@@ -90,7 +94,8 @@ void wifi_await_connection() {
 
 void wifi_exclusive_start(const char * caller) {
 	while( xSemaphoreTake( wifi_semaphore, 1000 / portTICK_RATE_MS) != pdTRUE ) {
-		ESP_LOGD(TAG, "Waiting to take mutex: %s", caller);
+		//Print out a warning if mutex is busy for that long
+		ESP_LOGW(TAG, "Waiting to take mutex: %s", caller);
 	}
 }
 

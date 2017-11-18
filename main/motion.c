@@ -32,6 +32,8 @@ void motion_handler(void * pvParameters) {
 		if(xSemaphoreTake(xSemaphore,portMAX_DELAY) == pdTRUE) {
 		    callback();
 		}
+
+		delay(10); //just to rule out busywaiting in corner cases
 	}
 }
 
