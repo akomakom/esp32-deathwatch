@@ -26,6 +26,8 @@ char* json_unformatted = NULL;
 
 const static char http_html_hdr[] =
 		"HTTP/1.1 200 OK\r\nContent-type: text/html\r\n\r\n";
+const static char http_json_hdr[] =
+		"HTTP/1.1 200 OK\r\nContent-type: application/json\r\n\r\n";
 const static char http_index_hml[] =
 		"<!DOCTYPE html>"
 				"<html>\n"
@@ -67,27 +69,28 @@ static void http_server_netconn_serve(struct netconn *conn) {
 		ESP_LOGD(TAG, "buffer = %s \n", buf);
 		if (buflen >= 5 && buf[0] == 'G' && buf[1] == 'E' && buf[2] == 'T'
 				&& buf[3] == ' ' && buf[4] == '/') {
-			ESP_LOGI(TAG, "buf[5] = %c\n", buf[5]);
+			ESP_LOGI(TAG, "URI = %c\n", buf[5]);
+
 			/* Send the HTML header
 			 * subtract 1 from the size, since we dont send the \0 in the string
 			 * NETCONN_NOCOPY: our data is const static, so no need to copy it
 			 */
-
-			netconn_write(conn, http_html_hdr, sizeof(http_html_hdr) - 1,
-					NETCONN_NOCOPY);
-
-			if (buf[5] == 's') {
-//        submit data now
-				/* Send our HTML page */
-				client_force_request_now();
-				netconn_write(conn, http_index_hml, sizeof(http_index_hml) - 1,
+			if (buf[5] == 'j') {
+				netconn_write(conn, http_json_hdr, sizeof(http_json_hdr) - 1,
 						NETCONN_NOCOPY);
-			} else if (buf[5] == 'j') {
 				netconn_write(conn, json_unformatted, strlen(json_unformatted),
 						NETCONN_NOCOPY);
 			} else {
+				netconn_write(conn, http_html_hdr, sizeof(http_html_hdr) - 1,
+						NETCONN_NOCOPY);
+
+				if (buf[5] == 's') {
+					//        submit data now
+					client_force_request_now();
+				}
 				netconn_write(conn, http_index_hml, sizeof(http_index_hml) - 1,
 						NETCONN_NOCOPY);
+
 			}
 		}
 

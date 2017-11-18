@@ -15,7 +15,7 @@ void initialise_wifi(void);
 void wifi_await_connection();
 
 
-void wifi_exclusive_start(char * caller);
-void wifi_exclusive_end(char * caller);
+void wifi_exclusive_start(const char * caller);
+void wifi_exclusive_end(const char * caller);
 
 #endif

@@ -88,13 +88,13 @@ void wifi_await_connection() {
                             false, true, portMAX_DELAY);
 }
 
-void wifi_exclusive_start(char * caller) {
+void wifi_exclusive_start(const char * caller) {
 	while( xSemaphoreTake( wifi_semaphore, 1000 / portTICK_RATE_MS) != pdTRUE ) {
 		ESP_LOGD(TAG, "Waiting to take mutex: %s", caller);
 	}
 }
 
-void wifi_exclusive_end(char * caller) {
+void wifi_exclusive_end(const char * caller) {
 	xSemaphoreGive(wifi_semaphore);
 }
 
