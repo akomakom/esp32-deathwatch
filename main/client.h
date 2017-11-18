@@ -7,6 +7,7 @@
 #define WEB_URL CONFIG_SUBMIT_URI
 #define WEB_POSTDATA_TEMPLATE CONFIG_SUBMIT_FORM_DATA_TEMPLATE
 #define SUBMIT_FREQUENCY CONFIG_SUBMIT_FREQUENCY
+#define WEB_VERIFY_SSL false
 
 /* Constants that aren't configurable in menuconfig */
 #define INITIAL_DELAY 10000

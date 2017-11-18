@@ -213,7 +213,7 @@ static void post_request_hook(main_data_t * main_data) {
 
         mbedtls_net_init(&server_fd);
 
-        ESP_LOGI(TAG, "Connecting to %s:%s/%s", WEB_SERVER, WEB_PORT, WEB_URL);
+        ESP_LOGI(TAG, "Connecting to %s:%s%s", WEB_SERVER, WEB_PORT, WEB_URL);
 
         if ((ret = mbedtls_net_connect(&server_fd, WEB_SERVER,
                                       WEB_PORT, MBEDTLS_NET_PROTO_TCP)) != 0)
@@ -237,18 +237,21 @@ static void post_request_hook(main_data_t * main_data) {
             }
         }
 
-        ESP_LOGD(TAG, "Verifying peer X.509 certificate...");
+        if (WEB_VERIFY_SSL) {
+            ESP_LOGD(TAG, "Verifying peer X.509 certificate...");
 
-        if ((flags = mbedtls_ssl_get_verify_result(&ssl)) != 0)
-        {
-            /* In real life, we probably want to close connection if ret != 0 */
-            ESP_LOGW(TAG, "Failed to verify peer certificate!");
-            bzero(buf, sizeof(buf));
-            mbedtls_x509_crt_verify_info(buf, sizeof(buf), "  ! ", flags);
-            ESP_LOGW(TAG, "verification info: %s", buf);
-        }
-        else {
-            ESP_LOGI(TAG, "Certificate verified.");
+            if ((flags = mbedtls_ssl_get_verify_result(&ssl)) != 0)
+            {
+                /* In real life, we probably want to close connection if ret != 0 */
+                ESP_LOGW(TAG, "Failed to verify peer certificate!");
+                bzero(buf, sizeof(buf));
+                mbedtls_x509_crt_verify_info(buf, sizeof(buf), "  ! ", flags);
+                ESP_LOGW(TAG, "verification info: %s", buf);
+                goto exit;
+            }
+            else {
+                ESP_LOGI(TAG, "Certificate verified.");
+            }
         }
 
         ESP_LOGD(TAG, "Cipher suite is %s", mbedtls_ssl_get_ciphersuite(&ssl));
