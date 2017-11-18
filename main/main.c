@@ -79,7 +79,17 @@ void app_main()
     initialize_ultrasound(&distance_callback);
     initialize_temperature(&temperature_callback);
 
-    initialize_client(&main_data);
-    initialize_server(&main_data);
 
+//    initialize_client(&main_data);
+//    initialize_server(&main_data);
+
+}
+
+void network_stopped_handler() {
+	stop_client();
+	stop_server();
+}
+void network_started_handler() {
+	start_server(&main_data);
+	start_client(&main_data);
 }

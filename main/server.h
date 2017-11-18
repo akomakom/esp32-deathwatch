@@ -17,8 +17,7 @@
 
 
 
-
-
-int initialize_server(main_data_t * main_data);
+void start_server(main_data_t * main_data);
+void stop_server();
 
 #endif

@@ -72,11 +72,14 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
             IP2STR(&event->event_info.got_ip.ip_info.gw)
         );
 
+        network_started_handler();
+
         break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
         /* This is a workaround as ESP32 WiFi libs don't currently
            auto-reassociate. */
         xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
+        network_stopped_handler();
         ESP_LOGI(TAG, "WIFI Disconnect, reconnecting");
         ESP_ERROR_CHECK(esp_wifi_connect());
         ESP_LOGI(TAG, "WIFI ReConnected");

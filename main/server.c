@@ -49,6 +49,11 @@ const static char http_index_hml[] =
 #include "lwip/netdb.h"
 #include "lwip/api.h"
 
+
+static TaskHandle_t xHandleServer = NULL;
+static TaskHandle_t xHandlePregen = NULL;
+
+
 static void http_server_netconn_serve(struct netconn *conn) {
 	struct netbuf *inbuf;
 	static char *buf;
@@ -191,9 +196,13 @@ static void generate_json(void *pvParameters) {
 	}
 }
 
-int initialize_server(main_data_t * main_data) {
-	xTaskCreate(&generate_json, "generate_json", 2048, main_data, 5, NULL);
-	xTaskCreate(&http_server, "http_server", 2048, main_data, 5, NULL);
-	return 0;
+void start_server(main_data_t * main_data) {
+	xTaskCreate(&generate_json, "generate_json", 2048, main_data, 3, &xHandlePregen);
+	xTaskCreate(&http_server, "http_server", 2048, main_data, 5, &xHandleServer);
+}
+
+void stop_server() {
+	vTaskDelete(xHandleServer);
+	vTaskDelete(xHandlePregen);
 }
 

@@ -17,4 +17,7 @@ typedef struct {
 
 #define delay(ms) (vTaskDelay(ms/portTICK_RATE_MS))
 
+void network_stopped_handler();
+void network_started_handler();
+
 #endif

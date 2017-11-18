@@ -368,6 +368,10 @@ void client_force_request_now() {
 }
 
 
-void initialize_client(main_data_t * main_data) {
+void start_client(main_data_t * main_data) {
     xTaskCreate(&https_post_task, "https_post_task", 8192, main_data, 15, &xHandle);
+}
+
+void stop_client() {
+	vTaskDelete(xHandle);
 }

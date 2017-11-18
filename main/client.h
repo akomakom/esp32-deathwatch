@@ -13,7 +13,8 @@
 #define INITIAL_DELAY 10000
 
 
-void initialize_client(main_data_t * main_data);
+void start_client(main_data_t * main_data);
+void stop_client();
 void client_force_request_now();
 
 #endif
