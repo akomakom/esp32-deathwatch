@@ -197,12 +197,19 @@ static void generate_json(void *pvParameters) {
 }
 
 void start_server(main_data_t * main_data) {
+	stop_server();
 	xTaskCreate(&generate_json, "generate_json", 2048, main_data, 3, &xHandlePregen);
 	xTaskCreate(&http_server, "http_server", 2048, main_data, 5, &xHandleServer);
 }
 
 void stop_server() {
-	vTaskDelete(xHandleServer);
-	vTaskDelete(xHandlePregen);
+	if (xHandleServer != NULL) {
+		vTaskDelete(xHandleServer);
+		xHandleServer = NULL;
+	}
+	if (xHandlePregen != NULL) {
+		vTaskDelete(xHandlePregen);
+		xHandlePregen = NULL;
+	}
 }
 
