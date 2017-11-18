@@ -88,11 +88,10 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 }
 
 void wifi_await_connection() {
-	EventBits_t uxBits;
-	while(xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
-                            false, true, 1000 / portTICK_RATE_MS) & CONNECTED_BIT == 0) {
+	while((xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
+                            false, true, 1000 / portTICK_RATE_MS) & CONNECTED_BIT) == 0) {
 
-		ESP_LOGW(TAG, "Someone is waiting for wifi connection");'
+		ESP_LOGW(TAG, "Someone is waiting for wifi connection");
 	}
 
 }
