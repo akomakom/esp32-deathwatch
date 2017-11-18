@@ -78,11 +78,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
            auto-reassociate. */
         xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
         ESP_LOGI(TAG, "WIFI Disconnect, reconnecting");
-        //just connect seems to fail, let's try stop/start
-        ESP_ERROR_CHECK(esp_wifi_stop());
-        ESP_ERROR_CHECK(esp_wifi_start());
-
-//        ESP_ERROR_CHECK(esp_wifi_connect());
+        ESP_ERROR_CHECK(esp_wifi_connect());
         ESP_LOGI(TAG, "WIFI ReConnected");
         break;
     default:
@@ -92,8 +88,13 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 }
 
 void wifi_await_connection() {
-    xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
-                            false, true, portMAX_DELAY);
+	EventBits_t uxBits;
+	while(xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
+                            false, true, 1000 / portTICK_RATE_MS) & CONNECTED_BIT == 0) {
+
+		ESP_LOGW(TAG, "Someone is waiting for wifi connection");'
+	}
+
 }
 
 void wifi_exclusive_start(const char * caller) {
