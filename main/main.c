@@ -82,13 +82,16 @@ void app_main()
 
 //    initialize_client(&main_data);
 //    initialize_server(&main_data);
-    start_server(&main_data);
+
+    if (CONFIG_SERVER_ENABLE) {
+        start_server(&main_data);
+    }
 
 }
 
 void network_stopped_handler() {
 	stop_client();
-//	stop_server(); //server not working too well
+//	stop_server(); //restarting server not working too well
 }
 void network_started_handler() {
 //	start_server(&main_data);

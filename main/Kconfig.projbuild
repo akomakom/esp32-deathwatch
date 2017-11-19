@@ -57,6 +57,11 @@ config SUBMIT_FORM_DATA_TEMPLATE
         Option 2:
         You can also use non-positional parameters instead (%d, %s, etc) but these options are mutually exclusive.
 
+
+config SERVER_ENABLE
+    bool "Enable built-in webserver on port 80"
+    default y
+
 config MOTION_PIN
     int "Number of the GPIO PIN connected to the Motion Sensor"
 	range 0 34
