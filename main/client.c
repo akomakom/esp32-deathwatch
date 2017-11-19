@@ -351,7 +351,7 @@ static void post_request_hook(main_data_t * main_data) {
 			ULONG_MAX, /* Reset the notification value to 0 on exit. */
 			NULL, /* Notified value pass out in
 							  ulNotifiedValue. */
-			SUBMIT_FREQUENCY * 60000 / portTICK_RATE_MS);  /* Blocking delay. */
+			SUBMIT_FREQUENCY * 1000 / portTICK_RATE_MS);  /* Blocking delay. */
 
         ESP_LOGI(TAG, "Starting again!");
 

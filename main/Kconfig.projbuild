@@ -15,9 +15,9 @@ config WIFI_PASSWORD
 		Can be left blank if the network has no security set.
 
 config SUBMIT_FREQUENCY
-    int "Minutes between submitting data to the HTTPS endpoint"
-	range 0 100000
-	default 60
+    int "Seconds between submitting data to the HTTPS endpoint"
+	range 0 1000000
+	default 3600
 
 config SUBMIT_ON_DOOR_STATE_CHANGE
     bool "Should make the request immediately if door position changes"
