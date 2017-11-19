@@ -87,9 +87,9 @@ void app_main()
 
 void network_stopped_handler() {
 	stop_client();
-	stop_server();
+//	stop_server(); //server not working too well
 }
 void network_started_handler() {
-	start_server(&main_data);
+//	start_server(&main_data);
 	start_client(&main_data);
 }
