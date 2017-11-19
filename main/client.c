@@ -209,7 +209,7 @@ static void post_request_hook(main_data_t * main_data) {
         */
         wifi_await_connection();
 
-        ESP_LOGI(TAG, "Connected to AP");
+        ESP_LOGI(TAG, "Ensured connection to AP");
 
         mbedtls_net_init(&server_fd);
 

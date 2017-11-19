@@ -104,7 +104,7 @@ static void http_server_netconn_serve(struct netconn *conn) {
 	}
 	/* Close the connection (server closes in HTTP) */
 	netconn_close(conn);
-
+	netconn_delete(conn);
 	/* Delete the buffer (netconn_recv gives us ownership,
 	 so we have to make sure to deallocate the buffer) */
 	netbuf_delete(inbuf);
