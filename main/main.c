@@ -82,6 +82,7 @@ void app_main()
 
 //    initialize_client(&main_data);
 //    initialize_server(&main_data);
+    start_server(&main_data);
 
 }
 
