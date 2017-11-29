@@ -76,9 +76,12 @@ void ultrasound_task(void * pvParameters) {
         {
             uint32_t diff = get_usec() - startTime; // Diff time in uSecs
             // Distance is TimeEchoInSeconds * SpeeOfSound / 2
-            double distance = 340.29 * diff / (1000 * 1000 * 2); // Distance in meters
-//            analyze_distance(distance * 100, main_data);
-            callback(distance * 100);
+            double distance = 340.29 * diff / (1000 * 1000 * 2) * 100; // Distance in cm
+            if (distance >= CONFIG_US_DISTANCE_MIN && distance <= CONFIG_US_DISTANCE_MAX) {
+            	callback(distance);
+            } else {
+            	ESP_LOGI(TAG, "Rejecting bad raw distance reading: %f", distance);
+            }
         }
         else
         {

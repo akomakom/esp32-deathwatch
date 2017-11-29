@@ -90,17 +90,11 @@ config US_DISTANCE_MIN
     int "Distance reading that should be accepted (min), cm."
 	range 0 900
 	default 0
-	help
-		Any reading outside this MIN/MAX range is considered erroneous 
-		and will not trigger any actions
 
 config US_DISTANCE_MAX
     int "Distance reading that should be accepted (max), cm."
 	range 0 900
 	default 900
-	help
-		Any reading outside this MIN/MAX range is considered erroneous 
-		and will not trigger any actions
 
 config US_DISTANCE_OPEN_MIN
     int "Distance to door when its open (min), cm"
