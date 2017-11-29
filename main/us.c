@@ -49,45 +49,64 @@ static uint32_t get_usec() {
 //
 // Toggle trig pin and wait for input on echo pin
 //
+double get_distance() {
+	double distance = US_BAD_READING;
+	// HC-SR04P
+	gpio_set_level(TRIG_PIN, 1);
+	delay(100 );
+	gpio_set_level(TRIG_PIN, 0);
+	uint32_t startTime=get_usec();
+
+	while (gpio_get_level(ECHO_PIN)==0 && get_usec()-startTime < 500*1000)
+	{
+		// Wait until echo goes high
+	}
+
+	startTime=get_usec();
+
+	while (gpio_get_level(ECHO_PIN)==1 && get_usec()-startTime < 500*1000)
+	{
+		// Wait until echo goes low again
+	}
+
+	if (gpio_get_level(ECHO_PIN) == 0)
+	{
+		uint32_t diff = get_usec() - startTime; // Diff time in uSecs
+		// Distance is TimeEchoInSeconds * SpeeOfSound / 2
+		distance = 340.29 * diff / (1000 * 1000 * 2) * 100; // Distance in cm
+	}
+	else
+	{
+		// No value
+		ESP_LOGI(TAG, "Did not receive a response!\n");
+	}
+	return distance;
+}
+
 void ultrasound_task(void * pvParameters) {
 
 	void (*callback)(double) = (void *) pvParameters;
 
     while(1) {
-        // HC-SR04P
-        gpio_set_level(TRIG_PIN, 1);
-        delay(100 );
-        gpio_set_level(TRIG_PIN, 0);
-        uint32_t startTime=get_usec();
+    	double distance = 0;
 
-        while (gpio_get_level(ECHO_PIN)==0 && get_usec()-startTime < 500*1000)
-        {
-            // Wait until echo goes high
-        }
+    	//average a few readings because the sensor can be jittery
+	    for (int i=1; i<=US_NUM_READINGS; i++) {
+	    	double reading = get_distance();
+	    	if (reading != US_BAD_READING) {
+	    		distance = (reading + get_distance()) / i;
+	    	}
+	    	delay(10); //to avoid clogging up the cores
+	    }
 
-        startTime=get_usec();
+		if (distance >= CONFIG_US_DISTANCE_MIN && distance <= CONFIG_US_DISTANCE_MAX) {
+			//good reading
+			callback(distance);
+		} else {
+			ESP_LOGI(TAG, "Rejecting bad distance reading: %f", distance);
+			distance = US_BAD_READING;
+		}
 
-        while (gpio_get_level(ECHO_PIN)==1 && get_usec()-startTime < 500*1000)
-        {
-            // Wait until echo goes low again
-        }
-
-        if (gpio_get_level(ECHO_PIN) == 0)
-        {
-            uint32_t diff = get_usec() - startTime; // Diff time in uSecs
-            // Distance is TimeEchoInSeconds * SpeeOfSound / 2
-            double distance = 340.29 * diff / (1000 * 1000 * 2) * 100; // Distance in cm
-            if (distance >= CONFIG_US_DISTANCE_MIN && distance <= CONFIG_US_DISTANCE_MAX) {
-            	callback(distance);
-            } else {
-            	ESP_LOGI(TAG, "Rejecting bad raw distance reading: %f", distance);
-            }
-        }
-        else
-        {
-            // No value
-            ESP_LOGI(TAG, "Did not receive a response!\n");
-        }
         // Delay and re run.
         delay(US_READ_DELAY );
     }

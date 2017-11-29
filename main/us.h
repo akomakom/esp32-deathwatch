@@ -6,6 +6,10 @@
 
 #define US_READ_DELAY 10000
 
+#define US_BAD_READING -1
+// how many successive readings to average
+#define US_NUM_READINGS 3
+
 void initialize_ultrasound(void (*callback)(double));
 
 #endif
