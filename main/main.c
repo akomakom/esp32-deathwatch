@@ -44,7 +44,7 @@ void distance_callback(double distance) {
     }
 
     if (main_data.door != DOOR_UNKNOWN && newstate != main_data.door) {
-    	ESP_LOGI(TAG, "Door state changed from %d to %d", main_data.door, newstate);
+    	ESP_LOGI(TAG, "Door state changed from %d to %d (distance: %f)", main_data.door, newstate, distance);
     	main_data.door = newstate;
     	if (CONFIG_SUBMIT_ON_DOOR_STATE_CHANGE) {
     	    client_force_request_now();
