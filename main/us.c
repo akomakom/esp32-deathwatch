@@ -88,15 +88,21 @@ void ultrasound_task(void * pvParameters) {
 	void (*callback)(double) = (void *) pvParameters;
 
     while(1) {
-    	double distance = 0;
+    	double distance = US_BAD_READING;
+    	uint8_t valid_readings = 0;
 
     	//average a few readings because the sensor can be jittery
 	    for (int i=1; i<=US_NUM_READINGS; i++) {
 	    	double reading = get_distance();
 	    	if (reading != US_BAD_READING) {
-	    		distance = (reading + get_distance()) / i;
+	    		valid_readings++;
+	    		distance += reading;
+	    		ESP_LOGI(TAG, "Averaging %f", reading);
 	    	}
 	    	delay(10); //to avoid clogging up the cores
+	    }
+	    if (valid_readings > 0) {
+	    	distance = distance / valid_readings;
 	    }
 
 		if (distance >= CONFIG_US_DISTANCE_MIN && distance <= CONFIG_US_DISTANCE_MAX) {
