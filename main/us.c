@@ -94,7 +94,7 @@ void ultrasound_task(void * pvParameters) {
     	//average a few readings because the sensor can be jittery
 	    for (int i=1; i<=US_NUM_READINGS; i++) {
 	    	double reading = get_distance();
-	    	if (reading != US_BAD_READING && distance >= CONFIG_US_DISTANCE_MIN && distance <= CONFIG_US_DISTANCE_MAX) {
+	    	if (reading != US_BAD_READING && reading >= CONFIG_US_DISTANCE_MIN && reading <= CONFIG_US_DISTANCE_MAX) {
 	    		valid_readings++;
 	    		distance += reading;
 	    		ESP_LOGI(TAG, "Averaging: %f", reading);
