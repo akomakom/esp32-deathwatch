@@ -8,7 +8,7 @@
 
 #define US_BAD_READING -1
 // how many successive readings to average
-#define US_NUM_READINGS 3
+#define US_NUM_READINGS 5
 
 void initialize_ultrasound(void (*callback)(double));
 
