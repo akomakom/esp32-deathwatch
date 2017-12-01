@@ -19,6 +19,8 @@
 //#include "driver/adc.h"
 #include <sys/time.h>
 
+#include <limits.h>
+
 #include "main.h"
 #include "us.h"
 
@@ -90,6 +92,8 @@ void ultrasound_task(void * pvParameters) {
     while(1) {
     	double distance = US_BAD_READING;
     	uint8_t valid_readings = 0;
+    	float min = UINT16_MAX;
+    	float max = -1;
 
     	//average a few readings because the sensor can be jittery
 	    for (int i=1; i<=US_NUM_READINGS; i++) {
@@ -97,15 +101,28 @@ void ultrasound_task(void * pvParameters) {
 	    	if (reading != US_BAD_READING && reading >= CONFIG_US_DISTANCE_MIN && reading <= CONFIG_US_DISTANCE_MAX) {
 	    		valid_readings++;
 	    		distance += reading;
+	    		if (reading > max) {
+	    			max = reading;
+	    		}
+	    		if (reading < min) {
+	    			min = reading;
+	    		}
 	    		ESP_LOGI(TAG, "Averaging: %f", reading);
 	    	} else {
 	    		ESP_LOGD(TAG, "Averaging: Bad reading: %f, rejected", reading);
 	    	}
 	    	delay(10); //to avoid clogging up the cores
 	    }
+
 	    if (valid_readings > 0) {
 	    	distance = distance / valid_readings;
+		    if (((max-min)/max) > US_MAX_DEVIATION) {
+		    	//let's assume that there is way too much deviation
+		    	ESP_LOGI(TAG, "Rejecting readings, too much deviation, probably jitter");
+		    	distance = US_BAD_READING;
+		    }
 	    }
+
 
 		if (distance != US_BAD_READING) {
 			//good reading

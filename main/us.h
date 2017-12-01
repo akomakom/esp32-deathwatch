@@ -7,6 +7,8 @@
 #define US_READ_DELAY 10000
 
 #define US_BAD_READING -1
+// reject all readings if among the US_NUM_READINGS readings (max-min)/max is greater than this
+#define US_MAX_DEVIATION 0.5
 // how many successive readings to average
 #define US_NUM_READINGS 5
 
