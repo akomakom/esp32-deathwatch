@@ -206,8 +206,6 @@ static void post_request_hook(main_data_t * main_data) {
         ESP_LOGI(TAG, "While begins");
         wifi_exclusive_start(TAG);
 
-        esp_task_wdt_reset(); //feed the watchdog
-
         /* Wait for the callback to set the CONNECTED_BIT in the
            event group.
         */
@@ -328,6 +326,8 @@ static void post_request_hook(main_data_t * main_data) {
 
         mbedtls_ssl_close_notify(&ssl);
 
+        esp_task_wdt_reset(); //feed the watchdog
+
         post_request_hook(main_data);
 
     exit:
@@ -377,9 +377,7 @@ void start_client(main_data_t * main_data) {
 	stop_client();
     xTaskCreate(&https_post_task, "https_post_task", 8192, main_data, 15, &xHandle);
 
-    //have the watchdog monitor this task and reboot if it hangs for any reason
-    //including failure to connect (but not too frequently)
-    esp_task_wdt_init(max(SUBMIT_FREQUENCY*5, WATCHDOG_MINIMUM_TIMEOUT), true);
+    esp_task_wdt_add(xHandle);
 }
 
 void stop_client() {

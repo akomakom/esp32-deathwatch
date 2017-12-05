@@ -9,6 +9,7 @@
 #include "esp_system.h"
 #include "esp_event.h"
 #include "esp_event_loop.h"
+#include "esp_task_wdt.h"
 #include "nvs_flash.h"
 #include "driver/gpio.h"
 #include "driver/uart.h"
@@ -65,6 +66,10 @@ void temperature_callback(float temperature) {
 void app_main()
 {
     ESP_ERROR_CHECK( nvs_flash_init() );
+
+    //have the watchdog monitor the client task and reboot if it hangs for any reason
+    //including failure to connect (but not too frequently)
+    esp_task_wdt_init(max(SUBMIT_FREQUENCY + WATCHDOG_MINIMUM_TIMEOUT, WATCHDOG_MINIMUM_TIMEOUT), true);
 
     //initial values
     main_data.temp = -1000;

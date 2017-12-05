@@ -26,3 +26,9 @@ void network_started_handler();
      _a > _b ? _a : _b; })
 
 #endif
+
+
+/* number of seconds before panic if the client task isn't feeding the watchdog.
+ * This is a minimum added to CONFIG_SUBMIT_FREQUENCY
+ */
+#define WATCHDOG_MINIMUM_TIMEOUT 120
