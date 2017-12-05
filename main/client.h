@@ -12,6 +12,10 @@
 /* Constants that aren't configurable in menuconfig */
 #define INITIAL_DELAY 10000
 
+/* number of seconds before panic if the client task isn't feeding the watchdog.
+ * This is a minimum, otherwise it's a multiple of CONFIG_SUBMIT_FREQUENCY
+ */
+#define WATCHDOG_MINIMUM_TIMEOUT 120
 
 void start_client(main_data_t * main_data);
 void stop_client();

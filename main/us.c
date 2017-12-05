@@ -118,7 +118,7 @@ void ultrasound_task(void * pvParameters) {
 	    	distance = distance / valid_readings;
 		    if (((max-min)/max) > US_MAX_DEVIATION) {
 		    	//let's assume that there is way too much deviation
-		    	ESP_LOGI(TAG, "Rejecting readings, too much deviation, probably jitter");
+		    	ESP_LOGI(TAG, "Rejecting readings, too much variance (%f-%f), probably jitter", min, max);
 		    	distance = US_BAD_READING;
 		    }
 	    }

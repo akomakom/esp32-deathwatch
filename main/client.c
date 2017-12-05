@@ -31,6 +31,7 @@
 #include "esp_log.h"
 #include "esp_system.h"
 #include "nvs_flash.h"
+#include "esp_task_wdt.h"
 
 #include "lwip/err.h"
 #include "lwip/sockets.h"
@@ -204,6 +205,9 @@ static void post_request_hook(main_data_t * main_data) {
     while(1) {
         ESP_LOGI(TAG, "While begins");
         wifi_exclusive_start(TAG);
+
+        esp_task_wdt_reset(); //feed the watchdog
+
         /* Wait for the callback to set the CONNECTED_BIT in the
            event group.
         */
@@ -353,6 +357,7 @@ static void post_request_hook(main_data_t * main_data) {
 							  ulNotifiedValue. */
 			SUBMIT_FREQUENCY * 1000 / portTICK_RATE_MS);  /* Blocking delay. */
 
+
         ESP_LOGI(TAG, "Starting again!");
 
     }
@@ -371,10 +376,15 @@ void client_force_request_now() {
 void start_client(main_data_t * main_data) {
 	stop_client();
     xTaskCreate(&https_post_task, "https_post_task", 8192, main_data, 15, &xHandle);
+
+    //have the watchdog monitor this task and reboot if it hangs for any reason
+    //including failure to connect (but not too frequently)
+    esp_task_wdt_init(max(SUBMIT_FREQUENCY*5, WATCHDOG_MINIMUM_TIMEOUT), true);
 }
 
 void stop_client() {
 	if (xHandle != NULL) {
+        esp_task_wdt_delete(xHandle);
 		vTaskDelete(xHandle);
 		xHandle = NULL;
 	}
