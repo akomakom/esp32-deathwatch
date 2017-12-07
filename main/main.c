@@ -32,6 +32,9 @@ static main_data_t main_data;
 void motion_callback() {
     ESP_LOGI(TAG, "Motion detected: %d", main_data.motion_count);
 	main_data.motion_count++;
+	if (CONFIG_SUBMIT_ON_MOTION) {
+		client_force_request_now();
+	}
 }
 
 void distance_callback(double distance) {
