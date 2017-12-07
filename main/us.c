@@ -107,9 +107,9 @@ void ultrasound_task(void * pvParameters) {
 	    		if (reading < min) {
 	    			min = reading;
 	    		}
-	    		ESP_LOGI(TAG, "Reading (%d/%d): %f", i, US_NUM_READINGS, reading);
+	    		ESP_LOGD(TAG, "Reading (%d/%d): %f", i, US_NUM_READINGS, reading);
 	    	} else {
-	    		ESP_LOGD(TAG, "Bad reading (%d/%d): %f, rejected", i, US_NUM_READINGS, reading);
+	    		ESP_LOGI(TAG, "Bad reading (%d/%d): %f, skipped", i, US_NUM_READINGS, reading);
 	    	}
 	    	delay(10); //to avoid clogging up the cores
 	    }
@@ -128,7 +128,7 @@ void ultrasound_task(void * pvParameters) {
 			//good reading
 			callback(distance);
 		} else {
-			ESP_LOGI(TAG, "Rejecting bad distance reading: %f", distance);
+			ESP_LOGI(TAG, "Rejecting final bad distance reading: %f", distance);
 		}
 
         // Delay and re run.
