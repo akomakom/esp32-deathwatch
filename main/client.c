@@ -377,7 +377,7 @@ void start_client(main_data_t * main_data) {
 	stop_client();
     xTaskCreate(&https_post_task, "https_post_task", 8192, main_data, 15, &xHandle);
 
-    esp_task_wdt_add(xHandle);
+    ESP_ERROR_CHECK(esp_task_wdt_add(xHandle));
 }
 
 void stop_client() {

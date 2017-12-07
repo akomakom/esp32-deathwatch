@@ -69,7 +69,10 @@ void app_main()
 
     //have the watchdog monitor the client task and reboot if it hangs for any reason
     //including failure to connect (but not too frequently)
-    esp_task_wdt_init(max(SUBMIT_FREQUENCY + WATCHDOG_MINIMUM_TIMEOUT, WATCHDOG_MINIMUM_TIMEOUT), true);
+    uint16_t watchdog_timeout = max(SUBMIT_FREQUENCY * CONFIG_SUBMIT_FAIL_COUNT_PANIC + WATCHDOG_MINIMUM_TIMEOUT, WATCHDOG_MINIMUM_TIMEOUT);
+    ESP_LOGI(TAG, "Setting task watchdog timeout to %d seconds", watchdog_timeout);
+    ESP_ERROR_CHECK(esp_task_wdt_init(watchdog_timeout, true));
+
 
     //initial values
     main_data.temp = -1000;

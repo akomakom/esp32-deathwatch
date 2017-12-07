@@ -50,7 +50,7 @@ static uint32_t get_usec() {
 
 //
 // Toggle trig pin and wait for input on echo pin
-//
+//or: 3
 double get_distance() {
 	double distance = US_BAD_READING;
 	// HC-SR04P
@@ -107,9 +107,9 @@ void ultrasound_task(void * pvParameters) {
 	    		if (reading < min) {
 	    			min = reading;
 	    		}
-	    		ESP_LOGI(TAG, "Averaging: %f", reading);
+	    		ESP_LOGI(TAG, "Reading (%d/%d): %f", i, US_NUM_READINGS, reading);
 	    	} else {
-	    		ESP_LOGD(TAG, "Averaging: Bad reading: %f, rejected", reading);
+	    		ESP_LOGD(TAG, "Bad reading (%d/%d): %f, rejected", i, US_NUM_READINGS, reading);
 	    	}
 	    	delay(10); //to avoid clogging up the cores
 	    }
