@@ -44,7 +44,8 @@ relying instead only on WiFi and Google.
   * The script also sends reminders if the garage door is left open.
 * Whatever else.
 
-The above is fully implemented in google docs, I'll share the code once I figure out how to anonymize it.
+The above is fully implemented in google docs, I'll share the code once I figure out how to anonymize it.  
+![Spreadsheet](/help/gco-screenshot.png?raw=true "Spreadsheet")
 
 
 
