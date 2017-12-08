@@ -30,8 +30,11 @@ config SUBMIT_ON_MOTION
     range 0 1
     help
     	If this is enabled, the request will be made for every motion event
-    	which means that motion count will usually not exceed 1 in the request
+    	which means that motion count will usually be 1 in the request
     	unless motion occurs multiple times while the previous request is being made.
+    	
+    	There is no attempt at throttling - if requests are happening too rapidly,
+    	you can (physically) adjust the time delay on the motion sensor itself.
 
 
 config SUBMIT_HOST
