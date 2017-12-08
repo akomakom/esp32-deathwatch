@@ -45,7 +45,7 @@ relying instead only on WiFi and Google.
 * Whatever else.
 
 The above is fully implemented in google docs, I'll share the code once I figure out how to anonymize it.  
-![Spreadsheet](/help/gco-screenshot.png?raw=true "Spreadsheet")
+![Spreadsheet](/help/gdoc-screenshot.png?raw=true "Spreadsheet")
 
 
 
