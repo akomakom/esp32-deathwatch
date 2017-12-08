@@ -34,7 +34,9 @@ config SUBMIT_ON_MOTION
     	unless motion occurs multiple times while the previous request is being made.
     	
     	There is no attempt at throttling - if requests are happening too rapidly,
-    	you can (physically) adjust the time delay on the motion sensor itself.
+    	you can (physically) adjust the time delay on the motion sensor itself. 
+    	I have mine set to about 20-30 seconds, so it only re-triggers if there has been 
+    	a 20+ second period of no motion followed by motion.
 
 
 config SUBMIT_HOST

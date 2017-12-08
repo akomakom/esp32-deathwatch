@@ -31,7 +31,7 @@ relying instead only on WiFi and Google.
 ##### It then does the following:
 
 * **Monitors** above sensors and collects data.
-* **Reports** said data via an HTTPS (SSL) request (eg: to Google Forms)
+* **Reports** said data via an HTTPS (SSL) POST request (eg: to Google Forms) 
 * Also provides a **webserver** that allows said data to be retrieved via HTTP, if you want (JSON).
 
 
@@ -44,7 +44,7 @@ relying instead only on WiFi and Google.
   * The script also sends reminders if the garage door is left open.
 * Whatever else.
 
-The above is fully implemented in google docs, I'll share the code once it stabilizes. 
+The above is fully implemented in google docs, I'll share the code once I figure out how to anonymize it.
 
 
 
@@ -55,7 +55,7 @@ The above is fully implemented in google docs, I'll share the code once it stabi
 
 The wiring is trivial, sensors are connected to power, ground and GPIO pins, except for the following:
 
-* US-100 rangefinder takes 5V input (taken from 5V pin) and outputs 5V signal (I think), so I run it through a resistor voltage divider (2.2k and 1k because that's what I had) before connecting to GPIO.
+* US-100 rangefinder takes 5V input (taken from 5V pin) and outputs 5V signal (I think), so I run it through a resistor voltage divider (2.2k and 1k because that's what I had) before connecting to GPIO.  UPDATE: it proved to be very unstable at long range (300 cm), and I had to add a lot of code to ignore bad readings.  At this time I am powering it from 3.3v and the ECHO pin is connected directly to GPIO (no divider).  That doesn't make it any more stable, but the wiring is simpler.
 * HC-SR501 motion detector takes 5V (taken from 5V pin) but outputs 3.3v, so it's just connected directly to GPIO.
 * DS18B20 temperature sensor connects directly to 3.3v power/ground pins and to GPIO for signal, except that a >=3K resistor is used to pull-up (connects signal wire to 3.3v) 
 
