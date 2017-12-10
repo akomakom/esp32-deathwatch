@@ -23,15 +23,15 @@ relying instead only on WiFi and Google.
 
 * A **motion sensor** (ie HC-SR501) - detects human motion, placed where pets will not trip it (garage in my case)
 * An **ultrasonic rangefinder** (ie US-100) - detects garage door position (both for fun and to serve its purpose).  Intended to be mounted on the ceiling pointed down, this can then identify 3 states: 
-    * Door open (short distance to door)
-    * Door closed (long distance to floor)
-    * Car present (medium distance to car)
+    1. Door open (short distance to door)
+    2. Car present (medium distance to car)
+    3. Door closed (long distance to floor)
 * A **temperature sensor** (DS18B20) - measures garage temperature just for fun.
 
 ##### It then does the following:
 
 * **Monitors** above sensors and collects data.
-* **Reports** said data via an HTTPS (SSL) POST request (eg: to Google Forms) 
+* **Reports** said data periodically via an HTTPS (SSL) POST request (eg: to Google Forms) 
 * Also provides a **webserver** that allows said data to be retrieved via HTTP, if you want (JSON).
 
 
@@ -79,6 +79,10 @@ Various components were adapted from:
 This application is meant to be used with `Espressif IoT Development Framework`_ (ESP-IDF) which should be properly installed. 
 
 Please check ESP-IDF docs for getting started instructions.
+
+run "make menuconfig" (a large number of configuration options are found in the DeathWatch menu item):
+
+![menuconfig](/help/menuconfig.png?raw=true "Menuconfig")
 
 #### Additional Possibilities:
 
