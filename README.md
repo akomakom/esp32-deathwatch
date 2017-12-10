@@ -44,7 +44,7 @@ relying instead only on WiFi and Google.
   * The script also sends reminders if the garage door is left open.
 * Whatever else.
 
-The above is fully implemented in google docs, I'll share the code once I figure out how to anonymize it. 
+The above is fully implemented in **google docs**. In fact, there is almost more logic in the spreadsheet and its associated script than there is in this repository.  To access, make a copy (in Google Drive) of [this spreadsheet](https://docs.google.com/spreadsheets/d/1qw4G7kOuIYnGbgxCVbODfhFE31ACRkr1jt2POPAOdRk/edit?usp=sharing) and you should have your own copy of the form and script associated with it. You'll want to set up triggers (in the Script Editor) and thresholds (on the Calculations sheet).  Screenshots from the doc:
 ![Spreadsheet](/help/gdoc-screenshot2.png?raw=true "Spreadsheet")
 ![Spreadsheet](/help/gdoc-screenshot.png?raw=true "Spreadsheet")
 
