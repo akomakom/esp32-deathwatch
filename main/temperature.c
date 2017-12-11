@@ -6,7 +6,7 @@
 
 #include "temperature.h"
 #include "ds18b20.h"
-#include "main.h"
+#include "utils.h"
 
 static const char *TAG = "temperature";
 

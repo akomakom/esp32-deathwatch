@@ -15,6 +15,7 @@
 
 #include "cJSON.h"
 
+#include "utils.h"
 #include "main.h"
 #include "client.h" //feels a little weird to plug directly into client, need better decoupling for submit now
 #include "server.h"
@@ -41,7 +42,9 @@ const static char http_index_hml[] =
 				"</head>\n"
 				"<body>\n"
 				"<h1>Hello World, from ESP32!</h1>\n"
-				"<a href='/j'>Data</a>"
+				"<ol>"
+				"<li> <a href='/j'>Data (json)</a> </li>"
+				"<li> /s (Submit Data Now) </li>"
 				"</body>\n"
 				"</html>\n";
 
@@ -155,6 +158,7 @@ static void generate_json(void *pvParameters) {
 	cJSON_AddNumberToObject(d, JSON_KEY_MOTION_COUNT, main_data->motion_count);
 	cJSON_AddNumberToObject(d, JSON_KEY_DOOR, main_data->door);
 	cJSON_AddNumberToObject(d, JSON_KEY_DOOR_RAW, main_data->door_raw_distance);
+	cJSON_AddNumberToObject(d, JSON_KEY_DOOR_AGE, 0);
 	cJSON_AddNumberToObject(d, JSON_KEY_REQUEST_COUNT, main_data->submit_count);
 	cJSON_AddNumberToObject(d, JSON_KEY_SERVE_COUNT,
 			main_data->server_request_count);
@@ -181,6 +185,8 @@ static void generate_json(void *pvParameters) {
 				cJSON_CreateNumber(main_data->door));
 		cJSON_ReplaceItemInObject(d, JSON_KEY_DOOR_RAW,
 				cJSON_CreateNumber(main_data->door_raw_distance));
+		cJSON_ReplaceItemInObject(d, JSON_KEY_DOOR_AGE,
+				cJSON_CreateNumber(esp_log_timestamp() - main_data->door_measurement_timestamp));
 		cJSON_ReplaceItemInObject(d, JSON_KEY_REQUEST_COUNT,
 				cJSON_CreateNumber(main_data->submit_count));
 		cJSON_ReplaceItemInObject(d, JSON_KEY_SERVE_COUNT,

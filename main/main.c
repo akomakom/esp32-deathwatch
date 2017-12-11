@@ -17,6 +17,7 @@
 //#include "driver/adc.h"
 #include <sys/time.h>
 
+#include "utils.h"
 #include "main.h"
 #include "network.h"
 #include "client.h"
@@ -29,7 +30,7 @@ static const char *TAG = "main";
 
 static main_data_t main_data;
 
-void motion_callback() {
+void callback_motion_event() {
     ESP_LOGI(TAG, "Motion detected: %d", main_data.motion_count);
 	main_data.motion_count++;
 	if (CONFIG_SUBMIT_ON_MOTION) {
@@ -37,7 +38,7 @@ void motion_callback() {
 	}
 }
 
-void distance_callback(double distance) {
+void callback_distance_reading(double distance) {
 	static uint8_t newstate = 0;
     if(distance > CONFIG_US_DISTANCE_OPEN_MIN && distance < CONFIG_US_DISTANCE_OPEN_MAX) {
     	newstate = DOOR_OPEN;
@@ -58,12 +59,39 @@ void distance_callback(double distance) {
     }
 
     main_data.door_raw_distance = distance; //saving it as an int for simplicity
+    main_data.door_measurement_timestamp = esp_log_timestamp();
+
     ESP_LOGI(TAG, "Distance: %f cm, Door: %d", distance, main_data.door);
 }
 
-void temperature_callback(float temperature) {
+void callback_temperature_reading(float temperature) {
     ESP_LOGI(TAG, "Temperature is %f C", temperature);
     main_data.temp = temperature;
+}
+
+/**
+ * Called to generate the client request body before post request
+ */
+void callback_gen_http_post_body(char * buf) {
+    //big hack because positional printf is broken with %f: https://github.com/espressif/esp-idf/issues/1269
+    char temp[10];
+	sprintf(temp, "%.2f", main_data.temp);
+
+
+	sprintf(buf, WEB_POSTDATA_TEMPLATE,
+			main_data.motion_count,
+			//check for age and report unknown if it's too old
+			((esp_log_timestamp() - main_data.door_measurement_timestamp) > (US_READ_DELAY * US_MAX_READING_AGE)) ? DOOR_UNKNOWN : main_data.door,
+			temp,
+			esp_log_timestamp() / 60000);
+}
+
+/**
+ * Called after client request succeeds
+ */
+void callback_post_request() {
+    main_data.motion_count = 0; //reset data
+    main_data.submit_count++;
 }
 
 void app_main()
@@ -82,22 +110,19 @@ void app_main()
     main_data.motion_count = 0;
     main_data.door = DOOR_UNKNOWN;
     main_data.submit_count = 0;
+    main_data.door_measurement_timestamp = 0;
     main_data.server_request_count = 0;
 
     initialise_wifi();
 
-    initialize_motion(&motion_callback);
-    initialize_ultrasound(&distance_callback);
-    initialize_temperature(&temperature_callback);
-
-
-//    initialize_client(&main_data);
-//    initialize_server(&main_data);
+    initialize_motion(&callback_motion_event);
+    initialize_ultrasound(&callback_distance_reading);
+    initialize_temperature(&callback_temperature_reading);
 
     if (CONFIG_SERVER_ENABLE) {
         start_server(&main_data);
     }
-    start_client(&main_data);
+    start_client(&callback_gen_http_post_body, &callback_post_request);
 }
 
 void network_stopped_handler() {

@@ -21,7 +21,7 @@
 
 #include <limits.h>
 
-#include "main.h"
+#include "utils.h"
 #include "us.h"
 
 
@@ -54,24 +54,24 @@ static uint32_t get_usec() {
 double get_distance() {
 	double distance = US_BAD_READING;
 	// HC-SR04P
-	gpio_set_level(TRIG_PIN, 1);
+	gpio_set_level(US_TRIG_PIN, 1);
 	delay(100 );
-	gpio_set_level(TRIG_PIN, 0);
+	gpio_set_level(US_TRIG_PIN, 0);
 	uint32_t startTime=get_usec();
 
-	while (gpio_get_level(ECHO_PIN)==0 && get_usec()-startTime < 500*1000)
+	while (gpio_get_level(US_ECHO_PIN)==0 && get_usec()-startTime < 500*1000)
 	{
 		// Wait until echo goes high
 	}
 
 	startTime=get_usec();
 
-	while (gpio_get_level(ECHO_PIN)==1 && get_usec()-startTime < 500*1000)
+	while (gpio_get_level(US_ECHO_PIN)==1 && get_usec()-startTime < 500*1000)
 	{
 		// Wait until echo goes low again
 	}
 
-	if (gpio_get_level(ECHO_PIN) == 0)
+	if (gpio_get_level(US_ECHO_PIN) == 0)
 	{
 		uint32_t diff = get_usec() - startTime; // Diff time in uSecs
 		// Distance is TimeEchoInSeconds * SpeeOfSound / 2
@@ -142,11 +142,11 @@ void ultrasound_task(void * pvParameters) {
  */
 void initialize_ultrasound(void (*callback)(double)) {
 
-    gpio_pad_select_gpio(TRIG_PIN);
-    gpio_pad_select_gpio(ECHO_PIN);
+    gpio_pad_select_gpio(US_TRIG_PIN);
+    gpio_pad_select_gpio(US_ECHO_PIN);
 
-    gpio_set_direction(TRIG_PIN, GPIO_MODE_OUTPUT);
-    gpio_set_direction(ECHO_PIN, GPIO_MODE_INPUT);
+    gpio_set_direction(US_TRIG_PIN, GPIO_MODE_OUTPUT);
+    gpio_set_direction(US_ECHO_PIN, GPIO_MODE_INPUT);
 
 	// start the task that will handle the button
 	xTaskCreate(ultrasound_task, "ultrasound_task", 2048, callback, 10, NULL);

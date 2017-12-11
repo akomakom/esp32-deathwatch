@@ -12,8 +12,14 @@
 /* Constants that aren't configurable in menuconfig */
 #define INITIAL_DELAY 10000
 
+/** Structure to initialize post task */
+typedef struct {
+	void (*callback_gen_body)(char *);
+	void (*callback_post_request)();
+} client_config_t;
 
-void start_client(main_data_t * main_data);
+
+void start_client(void (*callback_gen_body)(char *), void (*callback_post_request)());
 void stop_client();
 void client_force_request_now();
 

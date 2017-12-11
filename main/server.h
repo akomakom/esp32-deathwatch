@@ -12,6 +12,7 @@
 #define JSON_KEY_MOTION_COUNT 	"motion_count"
 #define JSON_KEY_DOOR			"door"
 #define JSON_KEY_DOOR_RAW		"door_raw"
+#define JSON_KEY_DOOR_AGE		"door_age"
 #define JSON_KEY_REQUEST_COUNT  "request_count"
 #define JSON_KEY_SERVE_COUNT  	"serve_count"
 

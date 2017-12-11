@@ -1,26 +1,3 @@
-/* HTTPS GET Example using plain mbedTLS sockets
- *
- * Contacts the howsmyssl.com API via TLS v1.2 and reads a JSON
- * response.
- *
- * Adapted from the ssl_client1 example in mbedtls.
- *
- * Original Copyright (C) 2006-2016, ARM Limited, All Rights Reserved, Apache 2.0 License.
- * Additions Copyright (C) Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD, Apache 2.0 License.
- *
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 #include <string.h>
 #include <stdlib.h>
 #include "freertos/FreeRTOS.h"
@@ -48,7 +25,7 @@
 #include "mbedtls/error.h"
 #include "mbedtls/certs.h"
 
-#include "main.h"
+#include "utils.h"
 #include "network.h"
 #include "client.h"
 
@@ -82,16 +59,19 @@ extern const uint8_t server_root_cert_pem_end[]   asm("_binary_server_root_cert_
 
 
 static TaskHandle_t xHandle = NULL;
+static client_config_t config;
 
 
-static void get_request_body(char * buf, main_data_t * main_data) {
+static void get_request_body(char * buf) {
     char body[100];
-    char temp[10];
+//    char temp[10];
 
     //big hack because positional printf is broken with %f: https://github.com/espressif/esp-idf/issues/1269
-    sprintf(temp, "%.2f", main_data->temp);
+//    sprintf(temp, "%.2f", main_data->temp);
 
-    sprintf(body, WEB_POSTDATA_TEMPLATE, main_data->motion_count, main_data->door, temp, esp_log_timestamp() / 60000);
+
+    config.callback_gen_body(&body);
+//    sprintf(body, WEB_POSTDATA_TEMPLATE, main_data->motion_count, main_data->door, temp, esp_log_timestamp() / 60000);
 
 
 
@@ -115,17 +95,17 @@ static void get_request_body(char * buf, main_data_t * main_data) {
 //    ESP_LOGI(TAG, "Submitting request: %s", buf);
 }
 
-static void post_request_hook(main_data_t * main_data) {
-    main_data->motion_count = 0; //reset data
-    main_data->submit_count++;
-}
+//static void post_request_hook(main_data_t * main_data) {
+//    main_data->motion_count = 0; //reset data
+//    main_data->submit_count++;
+//}
 
  void https_post_task(void *pvParameters) {
     char request[1024];
     char buf[512];
     int ret, flags, len;
 
-    main_data_t * main_data = (main_data_t *) pvParameters ;
+//    main_data_t * main_data = (main_data_t *) pvParameters ;
 
 
     mbedtls_entropy_context entropy;
@@ -259,7 +239,7 @@ static void post_request_hook(main_data_t * main_data) {
         ESP_LOGD(TAG, "Cipher suite is %s", mbedtls_ssl_get_ciphersuite(&ssl));
 
 
-        get_request_body(request, main_data);
+        get_request_body(request);
 
         ESP_LOGI(TAG, "Writing HTTP request which is %d bytes", strlen(request));
         ESP_LOGD(TAG, "REQUEST:\n%s", request);
@@ -328,7 +308,8 @@ static void post_request_hook(main_data_t * main_data) {
 
         esp_task_wdt_reset(); //feed the watchdog
 
-        post_request_hook(main_data);
+//        post_request_hook(main_data);
+        config.callback_post_request();
 
     exit:
 		wifi_exclusive_end(TAG);
@@ -373,9 +354,13 @@ void client_force_request_now() {
 }
 
 
-void start_client(main_data_t * main_data) {
+void start_client(void (*callback_gen_body)(char *), void (*callback_post_request)()) {
 	stop_client();
-    xTaskCreate(&https_post_task, "https_post_task", 8192, main_data, 15, &xHandle);
+
+	config.callback_gen_body = callback_gen_body;
+	config.callback_post_request = callback_post_request;
+
+    xTaskCreate(&https_post_task, "https_post_task", 8192, NULL, 15, &xHandle);
 
     ESP_ERROR_CHECK(esp_task_wdt_add(xHandle));
 }

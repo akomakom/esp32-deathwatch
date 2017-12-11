@@ -10,25 +10,21 @@ typedef struct {
     uint16_t motion_count;
     uint8_t door;
     uint16_t door_raw_distance;
+    uint32_t door_measurement_timestamp; //for stale detection
     float temp;
     uint16_t submit_count;
     uint16_t server_request_count;
 } main_data_t;
 
-#define delay(ms) (vTaskDelay(ms/portTICK_RATE_MS))
-
 void network_stopped_handler();
 void network_started_handler();
 
-#define max(a,b) \
-   ({ __typeof__ (a) _a = (a); \
-       __typeof__ (b) _b = (b); \
-     _a > _b ? _a : _b; })
-
-#endif
 
 
 /* number of seconds before panic if the client task isn't feeding the watchdog.
  * This is a minimum added to CONFIG_SUBMIT_FREQUENCY * CONFIG_SUBMIT_FAIL_COUNT_PANIC
  */
 #define WATCHDOG_MINIMUM_TIMEOUT 120
+
+
+#endif

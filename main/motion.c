@@ -5,7 +5,7 @@
 #include "freertos/semphr.h"
 #include "esp_log.h"
 
-#include "main.h"
+#include "utils.h"
 #include "motion.h"
 
 
