@@ -8,10 +8,13 @@
 
 typedef struct {
     uint16_t motion_count;
+    uint32_t motion_count_lifetime;
+    uint32_t motion_timestamp; //for stale detection
     uint8_t door;
     uint16_t door_raw_distance;
     uint32_t door_measurement_timestamp; //for stale detection
     float temp;
+    uint32_t temp_timestamp; //for stale detection
     uint16_t submit_count;
     uint16_t server_request_count;
 } main_data_t;

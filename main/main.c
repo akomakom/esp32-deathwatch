@@ -33,6 +33,8 @@ static main_data_t main_data;
 void callback_motion_event() {
     ESP_LOGI(TAG, "Motion detected: %d", main_data.motion_count);
 	main_data.motion_count++;
+	main_data.motion_count_lifetime++;
+	main_data.motion_timestamp = esp_log_timestamp();
 	if (CONFIG_SUBMIT_ON_MOTION) {
 		client_force_request_now();
 	}
@@ -48,14 +50,12 @@ void callback_distance_reading(double distance) {
     	newstate = DOOR_CLOSED;
     }
 
-    if (main_data.door != DOOR_UNKNOWN && newstate != main_data.door) {
+    if (newstate != main_data.door) {
     	ESP_LOGI(TAG, "Door state changed from %d to %d (distance: %f)", main_data.door, newstate, distance);
     	main_data.door = newstate;
     	if (CONFIG_SUBMIT_ON_DOOR_STATE_CHANGE) {
     	    client_force_request_now();
     	}
-    } else {
-    	main_data.door = newstate; //just set it quietly.
     }
 
     main_data.door_raw_distance = distance; //saving it as an int for simplicity
@@ -67,6 +67,7 @@ void callback_distance_reading(double distance) {
 void callback_temperature_reading(float temperature) {
     ESP_LOGI(TAG, "Temperature is %f C", temperature);
     main_data.temp = temperature;
+    main_data.temp_timestamp = esp_log_timestamp();
 }
 
 /**
@@ -79,11 +80,11 @@ void callback_gen_http_post_body(char * buf) {
 
 
 	sprintf(buf, WEB_POSTDATA_TEMPLATE,
-			main_data.motion_count,
-			//check for age and report unknown if it's too old
-			((esp_log_timestamp() - main_data.door_measurement_timestamp) > (US_READ_DELAY * US_MAX_READING_AGE)) ? DOOR_UNKNOWN : main_data.door,
-			temp,
-			esp_log_timestamp() / 60000);
+		main_data.motion_count,
+		//check for age and report unknown if it's too old
+		((esp_log_timestamp() - main_data.door_measurement_timestamp) > (US_READ_DELAY * US_MAX_READING_AGE)) ? DOOR_UNKNOWN : main_data.door,
+		((esp_log_timestamp() - main_data.temp_timestamp) > (TEMPERATURE_READ_FREQUENCY * TEMPERATURE_MAX_READING_AGE)) ? TEMPERATURE_BAD_READING_STRING : temp,
+		esp_log_timestamp() / 60000);
 }
 
 /**
@@ -106,8 +107,11 @@ void app_main()
 
 
     //initial values
-    main_data.temp = -1000;
+    main_data.temp = TEMPERATURE_BAD_READING;
+    main_data.temp_timestamp = 0;
     main_data.motion_count = 0;
+    main_data.motion_count_lifetime = 0;
+    main_data.motion_timestamp = 0;
     main_data.door = DOOR_UNKNOWN;
     main_data.submit_count = 0;
     main_data.door_measurement_timestamp = 0;
@@ -120,6 +124,7 @@ void app_main()
     initialize_temperature(&callback_temperature_reading);
 
     if (CONFIG_SERVER_ENABLE) {
+    	//server is currently tightly coupled with our data structure
         start_server(&main_data);
     }
     start_client(&callback_gen_http_post_body, &callback_post_request);

@@ -4,17 +4,20 @@
 
 #define JSON_REGEN_FREQUENCY 10000
 
-#define JSON_KEY_HEAP 			"heap"
-#define JSON_KEY_HEAP_MIN 		"heap_min"
-#define JSON_KEY_TIME 			"time"
-#define JSON_KEY_SDK 			"sdk"
-#define JSON_KEY_TEMPERATURE 	"temperature"
-#define JSON_KEY_MOTION_COUNT 	"motion_count"
-#define JSON_KEY_DOOR			"door"
-#define JSON_KEY_DOOR_RAW		"door_raw"
-#define JSON_KEY_DOOR_AGE		"door_age"
-#define JSON_KEY_REQUEST_COUNT  "request_count"
-#define JSON_KEY_SERVE_COUNT  	"serve_count"
+#define JSON_KEY_HEAP 				"heap"
+#define JSON_KEY_HEAP_MIN 			"heap_min"
+#define JSON_KEY_TIME 				"time"
+#define JSON_KEY_SDK 				"sdk"
+#define JSON_KEY_TEMPERATURE 		"temperature"
+#define JSON_KEY_TEMPERATURE_AGE	"temperature_age"
+#define JSON_KEY_MOTION_COUNT 		"motion_count"
+#define JSON_KEY_MOTION_COUNT_LIFE	"motion_count_lifetime"
+#define JSON_KEY_MOTION_AGE			"motion_age"
+#define JSON_KEY_DOOR				"door"
+#define JSON_KEY_DOOR_RAW			"door_raw"
+#define JSON_KEY_DOOR_AGE			"door_age"
+#define JSON_KEY_REQUEST_COUNT  	"request_count"
+#define JSON_KEY_SERVE_COUNT  		"serve_count"
 
 
 

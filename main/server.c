@@ -155,7 +155,10 @@ static void generate_json(void *pvParameters) {
 	cJSON_AddStringToObject(d, "myName", "DeathWatch");
 
 	cJSON_AddNumberToObject(d, JSON_KEY_TEMPERATURE, main_data->temp);
+	cJSON_AddNumberToObject(d, JSON_KEY_TEMPERATURE_AGE, 0);
 	cJSON_AddNumberToObject(d, JSON_KEY_MOTION_COUNT, main_data->motion_count);
+	cJSON_AddNumberToObject(d, JSON_KEY_MOTION_COUNT_LIFE, main_data->motion_count_lifetime);
+	cJSON_AddNumberToObject(d, JSON_KEY_MOTION_AGE, 0);
 	cJSON_AddNumberToObject(d, JSON_KEY_DOOR, main_data->door);
 	cJSON_AddNumberToObject(d, JSON_KEY_DOOR_RAW, main_data->door_raw_distance);
 	cJSON_AddNumberToObject(d, JSON_KEY_DOOR_AGE, 0);
@@ -179,8 +182,14 @@ static void generate_json(void *pvParameters) {
 
 		cJSON_ReplaceItemInObject(d, JSON_KEY_TEMPERATURE,
 				cJSON_CreateNumber(main_data->temp));
+		cJSON_ReplaceItemInObject(d, JSON_KEY_TEMPERATURE_AGE,
+				cJSON_CreateNumber(esp_log_timestamp() - main_data->temp_timestamp));
 		cJSON_ReplaceItemInObject(d, JSON_KEY_MOTION_COUNT,
 				cJSON_CreateNumber(main_data->motion_count));
+		cJSON_ReplaceItemInObject(d, JSON_KEY_MOTION_COUNT_LIFE,
+				cJSON_CreateNumber(main_data->motion_count_lifetime));
+		cJSON_ReplaceItemInObject(d, JSON_KEY_MOTION_AGE,
+				cJSON_CreateNumber(esp_log_timestamp() - main_data->motion_timestamp));
 		cJSON_ReplaceItemInObject(d, JSON_KEY_DOOR,
 				cJSON_CreateNumber(main_data->door));
 		cJSON_ReplaceItemInObject(d, JSON_KEY_DOOR_RAW,
