@@ -44,10 +44,10 @@ static const char *REQUEST = "POST " WEB_URL " HTTP/1.0\r\n"
 static const char *RESPONSE_OK = "HTTP/1.0 200";
 
 
-/* Root cert for howsmyssl.com, taken from server_root_cert.pem
+/* Root cert for forms.google.com, taken from server_root_cert.pem
 
    The PEM file was extracted from the output of this command:
-   openssl s_client -showcerts -connect www.howsmyssl.com:443 </dev/null
+   openssl s_client -showcerts -connect forms.google.com:443 </dev/null
 
    The CA root cert is the last cert given in the chain of certs.
 
@@ -57,56 +57,32 @@ static const char *RESPONSE_OK = "HTTP/1.0 200";
 extern const uint8_t server_root_cert_pem_start[] asm("_binary_server_root_cert_pem_start");
 extern const uint8_t server_root_cert_pem_end[]   asm("_binary_server_root_cert_pem_end");
 
+//simply double the template on the assumption that that will be enough for sprintf-processed string
+#define WEB_POSTDATA_SIZE_REFERENCE WEB_POSTDATA_TEMPLATE WEB_POSTDATA_TEMPLATE
 
 static TaskHandle_t xHandle = NULL;
 static client_config_t config;
 
+// the double string will be an initial value that defines its size and will be overwritten
+static char body[] = WEB_POSTDATA_SIZE_REFERENCE; //assume that this should be enough
+
 
 static void get_request_body(char * buf) {
-    char body[100];
 //    char temp[10];
 
-    //big hack because positional printf is broken with %f: https://github.com/espressif/esp-idf/issues/1269
-//    sprintf(temp, "%.2f", main_data->temp);
+	ESP_LOGD(TAG, "Size of body array is %d", sizeof(body));
 
-
-    config.callback_gen_body(&body);
-//    sprintf(body, WEB_POSTDATA_TEMPLATE, main_data->motion_count, main_data->door, temp, esp_log_timestamp() / 60000);
-
-
-
-//    ESP_LOGD(TAG, "Body: %s", body);
-//    ESP_LOGD(TAG, "Request Template: %s", REQUEST);
-
-//    printf("printf positional test: %1$u\n",  3);
-//    printf("printf positional test: %1$f\n",  0.3f);
-//    printf("printf normal test: %u\n",  3);
-//    printf("printf normal test: %f\n",  0.3f);
-//
-//    printf("printf positional test: %1$u ; %2$f ; %3$u\n",  3, 0.3f, 4);
-//    printf("printf positional test2: %1$u ; %3$f ; %2$u\n",  3, 4, 0.3f);
-//    printf("printf positional test3: %1$u ; %3$u ; %2$u\n",  3, 4, 5);
-//    printf("printf positional test4: %1$s ; %3$s ; %2$s\n",  "1", "2", "3");
-//
-//    printf("Temperature printf test normal: %.2f, %d",  main_data->temp, esp_log_timestamp());
+    config.callback_gen_body((char *)&body);
 
     sprintf(buf, REQUEST , strlen(body), body);
     ESP_LOGD(TAG, "strlen body: %d, request: %d", strlen(body), strlen(buf));
-//    ESP_LOGI(TAG, "Submitting request: %s", buf);
 }
 
-//static void post_request_hook(main_data_t * main_data) {
-//    main_data->motion_count = 0; //reset data
-//    main_data->submit_count++;
-//}
 
  void https_post_task(void *pvParameters) {
     char request[1024];
     char buf[512];
     int ret, flags, len;
-
-//    main_data_t * main_data = (main_data_t *) pvParameters ;
-
 
     mbedtls_entropy_context entropy;
     mbedtls_ctr_drbg_context ctr_drbg;
