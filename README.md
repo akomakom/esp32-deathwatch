@@ -58,7 +58,7 @@ The above is fully implemented in **google docs**. In fact, there is almost more
 
 The wiring is trivial, sensors are connected to power, ground and GPIO pins.   Some details:
 
-* **HC-SR04-P** rangefinder is happy with 3.3V input and outputs 3.3V signal (I think), so it connects directly to GPIO.  I first used a 5V US-100 rangefinder but it was very unstable (the diagram shows the old wiring).  The HC-SR04-P is like an HC-SRC04 but works well at low voltage.
+* **HC-SR04-P** rangefinder is happy with 3.3V input and outputs 3.3V signal (I think), so it connects directly to GPIO.  I first used a 5V US-100 rangefinder but it was very unstable (the diagram shows the old wiring).  The HC-SR04-P is like an HC-SR04 but works well at low voltage.
 * **HC-SR501** motion detector takes 5V (taken from 5V pin) but outputs 3.3v, so it's just connected directly to GPIO.
 * **DS18B20** temperature sensor connects directly to 3.3v power/ground pins and to GPIO for signal, except that a >=3K resistor is used to pull-up (connects signal wire to 3.3v) 
 
