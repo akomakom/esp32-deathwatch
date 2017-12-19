@@ -22,7 +22,7 @@ relying instead only on WiFi and Google.
 ##### The ESP-32 board is connected to:
 
 * A **motion sensor** (ie HC-SR501) - detects human motion, placed where pets will not trip it (garage in my case)
-* An **ultrasonic rangefinder** (ie US-100) - detects garage door position (both for fun and to serve its purpose).  Intended to be mounted on the ceiling pointed down, this can then identify 3 states: 
+* An **ultrasonic rangefinder** (ie HC-SR04-P) - detects garage door position (both for fun and to serve its purpose).  Intended to be mounted on the ceiling pointed down, this can then identify 3 states: 
     1. Door open (short distance to door)
     2. Car present (medium distance to car)
     3. Door closed (long distance to floor)
@@ -56,14 +56,14 @@ The above is fully implemented in **google docs**. In fact, there is almost more
 ![Circuit](/help/circuit.png?raw=true "Circuit")
 
 
-The wiring is trivial, sensors are connected to power, ground and GPIO pins, except for the following:
+The wiring is trivial, sensors are connected to power, ground and GPIO pins.   Some details:
 
-* US-100 rangefinder takes 5V input (taken from 5V pin) and outputs 5V signal (I think), so I run it through a resistor voltage divider (2.2k and 1k because that's what I had) before connecting to GPIO.  UPDATE: it proved to be very unstable at long range (300 cm), and I had to add a lot of code to ignore bad readings.  At this time I am powering it from 3.3v and the ECHO pin is connected directly to GPIO (no divider).  That doesn't make it any more stable, but the wiring is simpler.
-* HC-SR501 motion detector takes 5V (taken from 5V pin) but outputs 3.3v, so it's just connected directly to GPIO.
-* DS18B20 temperature sensor connects directly to 3.3v power/ground pins and to GPIO for signal, except that a >=3K resistor is used to pull-up (connects signal wire to 3.3v) 
+* **HC-SR04-P** rangefinder is happy with 3.3V input and outputs 3.3V signal (I think), so it connects directly to GPIO.  I first used a 5V US-100 rangefinder but it was very unstable.  The HC-SR04-P is like an HC-SRC04 but works well at low voltage.
+* **HC-SR501** motion detector takes 5V (taken from 5V pin) but outputs 3.3v, so it's just connected directly to GPIO.
+* **DS18B20** temperature sensor connects directly to 3.3v power/ground pins and to GPIO for signal, except that a >=3K resistor is used to pull-up (connects signal wire to 3.3v) 
 
 All of the above are standard wiring connections and can be found on the interwebs.  
-ADC1 pins are used for all of the above since WiFi is used (see defaults). 
+ADC1 pins are used for all of the above since WiFi is used (see defaults in menuconfig). 
 
 #### Credits
 
