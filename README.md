@@ -53,7 +53,7 @@ The above is fully implemented in **google docs**. In fact, there is almost more
 
 #### Circuit
 
-![Circuit](/help/circuit.png?raw=true "Circuit")
+![Circuit](/help/DeathWatch_schem.png?raw=true "Circuit")
 
 
 The wiring is trivial, sensors are connected to power, ground and GPIO pins.   Some details:
